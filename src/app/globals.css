@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+
+  /* ---------------- PRIMARY (Pink) ---------------- */
+  --primary-100: #ff237c;
+  --primary-200: #f85d8d;
+  --primary-300: #d10959;
+  --primary-400: #b0074a;
+  --primary-500: #8c002b;
+
+  /* ---------------- NEUTRAL (Gray) ---------------- */
+  --neutral-100: #ffffff;
+  --neutral-200: #e0e0e0;
+  --neutral-300: #c2c2c2;
+  --neutral-400: #b0b0b0;
+  --neutral-500: #a4a4a4;
+  --neutral-600: #8e8e8e;
+  --neutral-700: #777777;
+  --neutral-800: #606060;
+  --neutral-900: #4a4a4a;
+  --neutral-1000: #353333;
+
+  /* ---------------- RED ---------------- */
+  --red-100: #ff3748;
+  --red-200: #e40016;
+
+  /* ---------------- YELLOW ---------------- */
+  --yellow-100: #f1d043;
+  --yellow-200: #dbaf00;
+
+  /* ---------------- SECONDARY (Purple) ---------------- */
+  --secondary-100: #9406ee;
+  --secondary-200: #8c04e0;
+  --secondary-300: #7500c0;
+  --secondary-400: #6805a5;
+  --secondary-500: #540075;
+
+  /* ---------------- GREEN ---------------- */
+  --green-100: #81d9b4;
+  --green-200: #17c16b;
+
+  /* ---------------- WEBSITE GRADIENTS ---------------- */
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary-300) 0%,
+    var(--primary-100) 100%
+  );
+
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--secondary-200) 0%,
+    var(--secondary-500) 100%
+  );
+
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--primary-200) 0%,
+    var(--secondary-200) 100%
+  );
+
+  --gradient-background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #fff0f7 50%,
+    #ffffff 100%
+  );
+
+  /* CTA HEADING GRADIENT */
+--gradient-cta: linear-gradient(
+90deg,
+#FF4C95 0%,
+#9D00FF 100%
+);
+
+/* FOOTER BACKGROUND GRADIENT */
+--gradient-footer: linear-gradient(
+180deg,
+#FF8BBA 0%,
+#D28CFD 100%
+);
+
+}
+
+
+/* ---------------- BASE STYLES ---------------- */
+
+html, body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--gradient-background);
+  color: var(--neutral-900);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--neutral-1000);
+}
+
+
+/* ---------------- SCROLLBAR ---------------- */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-200);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-300);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-400);
+}
