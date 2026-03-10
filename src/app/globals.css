@@ -83,6 +83,8 @@
 #D28CFD 100%
 );
 
+--gradient-card: linear-gradient(180deg, #FF67A4 0%, #FFFFFF 100%);
+
 }
 
 
@@ -93,11 +95,6 @@ html, body {
   background: var(--gradient-background);
   color: var(--neutral-900);
   overflow-x: hidden;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
-  color: var(--neutral-1000);
 }
 
 
@@ -118,4 +115,13 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-400);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

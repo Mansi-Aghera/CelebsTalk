@@ -26,7 +26,7 @@ export default function Section({
     <section
       id={id}
       className={cn(
-        "w-full overflow-hidden py-16 md:py-24",
+        "w-full overflow-hidden py-11 md:py-21",
         bgMap[bg],
         className
       )}
