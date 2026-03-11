@@ -1,3 +1,4 @@
+
 // "use client";
 
 // import { motion } from "framer-motion";
@@ -26,19 +27,16 @@
 //   { icon: <Gamepad2 size={22} />, title: "Gamers" },
 // ];
 
+// // Duplicate list for infinite loop
+// const loopCategories = [...categories, ...categories];
+
 // export default function BrowseCategory() {
 //   return (
 //     <Section className="py-24">
 //       <Container>
 
 //         {/* Heading */}
-//         <motion.div
-//           initial={{ opacity: 0, y: 40 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.8, ease: "easeOut" }}
-//           viewport={{ once: true }}
-//           className="text-center"
-//         >
+//         <div className="text-center">
 //           <h2
 //             className="text-[32px] md:text-[52px] font-semibold"
 //             style={{
@@ -54,31 +52,30 @@
 //           <p className="text-[var(--neutral-600)] mt-2">
 //             Find the icons that inspire you
 //           </p>
-//         </motion.div>
+//         </div>
 
-//         {/* Categories Grid */}
-//         <motion.div
-//   initial="hidden"
-//   whileInView="show"
-//   viewport={{ once: true }}
-//   variants={{
-//     hidden: {},
-//     show: {
-//       transition: {
-//         staggerChildren: 0.18
-//       },
-//     },
-//   }}
-//   className="flex flex-wrap justify-center gap-6 mt-12"
-// >
-//           {categories.map((category, index) => (
-//             <CategoryCard
-//               key={index}
-//               icon={category.icon}
-//               title={category.title}
-//             />
-//           ))}
-//         </motion.div>
+//         {/* Infinite Carousel */}
+//         <div className="overflow-hidden mt-14">
+
+//           <motion.div
+//             className="flex gap-6 w-max"
+//             animate={{ x: ["0%", "-50%"] }}
+//             transition={{
+//               ease: "linear",
+//               duration: 70,
+//               repeat: Infinity,
+//             }}
+//           >
+//             {loopCategories.map((category, index) => (
+//               <CategoryCard
+//                 key={index}
+//                 icon={category.icon}
+//                 title={category.title}
+//               />
+//             ))}
+//           </motion.div>
+
+//         </div>
 
 //       </Container>
 //     </Section>
@@ -122,7 +119,18 @@ export default function BrowseCategory() {
       <Container>
 
         {/* Heading */}
-        <div className="text-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ 
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+            mass: 0.5
+          }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
           <h2
             className="text-[32px] md:text-[52px] font-semibold"
             style={{
@@ -135,14 +143,34 @@ export default function BrowseCategory() {
             Browse by Category
           </h2>
 
-          <p className="text-[var(--neutral-600)] mt-2">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 20,
+              delay: 0.1
+            }}
+            className="text-[var(--neutral-600)] mt-2"
+          >
             Find the icons that inspire you
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Infinite Carousel */}
-        <div className="overflow-hidden mt-14">
-
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ 
+            type: "spring",
+            stiffness: 100,
+            damping: 20,
+            delay: 0.2
+          }}
+          viewport={{ once: true }}
+          className="overflow-hidden mt-14"
+        >
           <motion.div
             className="flex gap-6 w-max"
             animate={{ x: ["0%", "-50%"] }}
@@ -160,8 +188,7 @@ export default function BrowseCategory() {
               />
             ))}
           </motion.div>
-
-        </div>
+        </motion.div>
 
       </Container>
     </Section>
