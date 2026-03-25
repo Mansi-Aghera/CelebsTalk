@@ -1,495 +1,133 @@
-// // "use client";
 
-// // import Image from "next/image";
-// // import { motion } from "framer-motion";
-
-// // interface CelebrityCardProps {
-// //   name: string;
-// //   role: string;
-// //   description: string;
-// //   rating: number;
-// //   reviews: number;
-// //   image: string;
-// //   videoPrice: string;
-// //   callPrice: string;
-// //   chatPrice: string;
-// // }
-
-// // export default function CelebrityCard({
-// //   name,
-// //   role,
-// //   description,
-// //   rating,
-// //   reviews,
-// //   image,
-// //   videoPrice,
-// //   callPrice,
-// //   chatPrice,
-// // }: CelebrityCardProps) {
-// //   return (
-// //     <motion.div
-// //       whileHover={{ y: -6 }}
-// //       transition={{ duration: 0.25 }}
-// //       className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-[var(--neutral-200)] shadow-sm hover:shadow-lg transition-all duration-300"
-// //     >
-// //       {/* Image */}
-// //       <div className="relative w-[70px] h-[70px] rounded-xl overflow-hidden flex-shrink-0">
-// //         <Image
-// //           src={image}
-// //           alt={name}
-// //           fill
-// //           className="object-cover"
-// //         />
-// //       </div>
-
-// //       {/* Content */}
-// //       <div className="flex-1">
-// //         <h4 className="font-semibold text-[15px]">{name}</h4>
-
-// //         <p className="text-xs text-[var(--primary-300)] font-medium">
-// //           {role}
-// //         </p>
-
-// //         <p className="text-xs text-[var(--neutral-600)] mt-1 line-clamp-2">
-// //           {description}
-// //         </p>
-
-// //         <div className="flex items-center gap-2 mt-2 text-xs">
-// //           ⭐ {rating}
-// //           <span className="text-[var(--neutral-600)]">
-// //             ({reviews} Ratings)
-// //           </span>
-// //         </div>
-// //       </div>
-
-// //       {/* Pricing */}
-// //       <div className="flex flex-col gap-2 text-xs">
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           📹 {videoPrice}
-// //         </span>
-
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           📞 {callPrice}
-// //         </span>
-
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           💬 {chatPrice}
-// //         </span>
-// //       </div>
-// //     </motion.div>
-// //   );
-// // }
-
-// // "use client";
-
-// // import Image from "next/image";
-// // import { motion } from "framer-motion";
-
-// // interface CelebrityCardProps {
-// //   name: string;
-// //   role: string;
-// //   description: string;
-// //   rating: number;
-// //   reviews: number;
-// //   image: string;
-// //   videoPrice: string;
-// //   callPrice: string;
-// //   chatPrice: string;
-// // }
-
-// // export default function CelebrityCard({
-// //   name,
-// //   role,
-// //   description,
-// //   rating,
-// //   reviews,
-// //   image,
-// //   videoPrice,
-// //   callPrice,
-// //   chatPrice,
-// // }: CelebrityCardProps) {
-// //   return (
-// //     <motion.div
-// //       whileHover={{ y: -8 }}
-// //       transition={{ duration: 0.35, ease: "easeOut" }}
-// //       className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-[var(--neutral-200)] shadow-sm hover:shadow-lg transition-all duration-300 ease-out"
-// //     >
-// //       {/* Image */}
-// //       <div className="relative w-[70px] h-[70px] rounded-xl overflow-hidden flex-shrink-0">
-// //         <Image
-// //           src={image}
-// //           alt={name}
-// //           fill
-// //           className="object-cover"
-// //         />
-// //       </div>
-
-// //       {/* Content */}
-// //       <div className="flex-1">
-// //         <h4 className="font-semibold text-[15px]">{name}</h4>
-
-// //         <p className="text-xs text-[var(--primary-300)] font-medium">
-// //           {role}
-// //         </p>
-
-// //         <p className="text-xs text-[var(--neutral-600)] mt-1 line-clamp-2">
-// //           {description}
-// //         </p>
-
-// //         <div className="flex items-center gap-2 mt-2 text-xs">
-// //           ⭐ {rating}
-// //           <span className="text-[var(--neutral-600)]">
-// //             ({reviews} Ratings)
-// //           </span>
-// //         </div>
-// //       </div>
-
-// //       {/* Pricing */}
-// //       <div className="flex flex-col gap-2 text-xs">
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           📹 {videoPrice}
-// //         </span>
-
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           📞 {callPrice}
-// //         </span>
-
-// //         <span className="flex items-center gap-1 bg-green-50 text-green-600 px-2 py-1 rounded-full">
-// //           💬 {chatPrice}
-// //         </span>
-// //       </div>
-// //     </motion.div>
-// //   );
-// // }
-
-// "use client";
-
-// import Image from "next/image";
-// import { motion } from "framer-motion";
-
-// interface CelebrityCardProps {
-//   name: string;
-//   role: string;
-//   description: string;
-//   languages?: string;
-//   location?: string;
-//   orders?: number;
-//   rating: number;
-//   image: string;
-//   videoPrice: string;
-//   callPrice: string;
-//   chatPrice: string;
-// }
-
-// export default function CelebrityCard({
-//   name,
-//   role,
-//   description,
-//   languages,
-//   location,
-//   orders,
-//   rating,
-//   image,
-//   videoPrice,
-//   callPrice,
-//   chatPrice,
-// }: CelebrityCardProps) {
-//   return (
-//     <motion.div
-//       whileHover={{ y: -6 }}
-//       transition={{ duration: 0.35 }}
-//       className="flex bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md overflow-hidden"
-//     >
-      
-//       {/* IMAGE FULL HEIGHT */}
-//       <div className="relative w-[120px] min-h-[140px]">
-//         <Image
-//           src={image}
-//           alt={name}
-//           fill
-//           className="object-cover"
-//         />
-//       </div>
-
-//       {/* CONTENT */}
-//       <div className="flex flex-1 justify-between p-4">
-
-//         {/* DETAILS */}
-//         <div className="text-sm space-y-[2px]">
-
-//           <div className="flex items-center gap-1 font-semibold text-[16px]">
-//             {name}
-//             <span className="text-blue-500 text-xs">✔</span>
-//           </div>
-
-//           <p className="text-xs text-gray-500 flex items-center gap-1">
-//             {role}
-//             <span className="text-red-500">▶</span>
-//             100k
-//           </p>
-
-//           <p className="text-xs text-gray-600">{description}</p>
-
-//           {languages && <p className="text-xs text-gray-600">{languages}</p>}
-
-//           {location && <p className="text-xs text-gray-600">{location}</p>}
-
-//           {orders && <p className="text-xs text-gray-600">Orders: {orders}</p>}
-
-//           <div className="flex items-center gap-2 pt-1">
-//             <span className="bg-yellow-400 text-black text-xs px-2 py-[2px] rounded">
-//               {rating.toFixed(1)}
-//             </span>
-
-//             <span className="text-yellow-400 text-sm">
-//               ★★★★★
-//             </span>
-//           </div>
-//         </div>
-
-//         {/* ACTION BUTTONS */}
-//         <div className="flex flex-col justify-center gap-3 text-xs">
-
-//           <div className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full">
-//             📹 {videoPrice}
-//           </div>
-
-//           <div className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full">
-//             📞 {callPrice}
-//           </div>
-
-//           <div className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full">
-//             💬 {chatPrice}
-//           </div>
-
-//         </div>
-//       </div>
-//     </motion.div>
-//   );
-// }
 
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { Video, Phone, MessageSquare, Youtube } from "lucide-react";
 
 interface CelebrityCardProps {
-  name: string;
-  role: string;
-  description: string;
-  languages?: string;
-  location?: string;
-  orders?: number;
-  rating: number;
-  image: string;
-  videoPrice: string;
-  callPrice: string;
-  chatPrice: string;
+name: string;
+image: string;
+category: string;
+languages: string;
+location: string;
+orders: number;
+subscribers: string;
+rating: number;
+videoPrice: string;
+callPrice: string;
+chatPrice: string;
 }
 
-// Smooth card animations
-const cardVariants = {
-  hidden: { 
-    opacity: 0,
-    scale: 0.95,
-    y: 10
-  },
-  show: { 
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 20,
-      mass: 0.5
-    }
-  },
-  hover: {
-    y: -6,
-    scale: 1.02,
-    transition: {
-      type: "spring",
-      stiffness: 400,
-      damping: 25,
-      mass: 0.8
-    }
-  }
-} as const;
-
-const buttonVariants = {
-  hidden: { opacity: 0, x: -5 },
-  show: { 
-    opacity: 1, 
-    x: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 20
-    }
-  },
-  hover: {
-    scale: 1.05,
-   
-    transition: {
-      type: "spring",
-      stiffness: 400,
-      damping: 25
-    }
-  }
-} as const;
-
 export default function CelebrityCard({
-  name,
-  role,
-  description,
-  languages,
-  location,
-  orders,
-  rating,
-  image,
-  videoPrice,
-  callPrice,
-  chatPrice,
+name,
+image,
+category,
+languages,
+location,
+orders,
+subscribers,
+rating = 5,
+videoPrice,
+callPrice,
+chatPrice,
 }: CelebrityCardProps) {
-  return (
-    <motion.div
-      variants={cardVariants}
-      initial="hidden"
-      animate="show"
-      whileHover="hover"
-      className="flex bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md overflow-hidden"
-    >
-      
-      {/* IMAGE FULL HEIGHT */}
-      <motion.div 
-        className="relative w-[120px] min-h-[140px]"
-        whileHover={{ scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      >
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="object-cover"
-        />
-      </motion.div>
+return ( <div className="flex justify-between items-stretch bg-white border border-[#bdbdbd] rounded-xl w-full max-w-[720px] overflow-hidden">
 
-      {/* CONTENT */}
-      <motion.div 
-        className="flex flex-1 justify-between p-4"
-        variants={{
-          show: { transition: { staggerChildren: 0.03 } }
-        }}
-      >
 
-        {/* DETAILS */}
-        <motion.div 
-          className="text-sm space-y-[2px]"
-          variants={{
-            show: { transition: { staggerChildren: 0.02 } }
-          }}
-        >
-          <motion.div 
-            variants={buttonVariants}
-            className="flex items-center gap-1 font-semibold text-[16px]"
-          >
-            {name}
-            <motion.span 
-              className="text-blue-500 text-xs"
-              animate={{ rotate: [0, 15, 0] }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >✔</motion.span>
-          </motion.div>
+  {/* LEFT SIDE */}
+  <div className="flex gap-4 items-stretch">
 
-          <motion.p 
-            variants={buttonVariants}
-            className="text-xs text-gray-500 flex items-center gap-1"
-          >
-            {role}
-            <motion.span 
-              className="text-red-500"
-              animate={{ x: [0, 3, 0] }}
-              transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-            >▶</motion.span>
-            100k
-          </motion.p>
+    {/* IMAGE */}
+   <div className="relative w-[180px] min-h-[130px] overflow-hidden rounded-l-xl">
+  <Image
+    src={image}
+    alt={name}
+    fill
+    className="object-cover"
+  />
+</div>
 
-          <motion.p variants={buttonVariants} className="text-xs text-gray-600">
-            {description}
-          </motion.p>
+    {/* DETAILS */}
+    <div className="text-sm py-4  ">
 
-          {languages && (
-            <motion.p variants={buttonVariants} className="text-xs text-gray-600">
-              {languages}
-            </motion.p>
-          )}
+      {/* NAME */}
+      <div className="flex items-center gap-2 font-semibold text-[16px]">
+        {name}
+        <span className="flex items-center justify-center w-[16px] h-[16px] bg-[#3b82f6] text-white text-[10px] rounded-full">
+  ✓
+</span>
+      </div>
 
-          {location && (
-            <motion.p variants={buttonVariants} className="text-xs text-gray-600">
-              {location}
-            </motion.p>
-          )}
+      {/* YOUTUBE */}
+      <div className="flex items-center gap-1 text-xs text-gray-600 mt-[2px] leading-[16px]">
+  <span>YouTube :</span>
 
-          {orders && (
-            <motion.p variants={buttonVariants} className="text-xs text-gray-600">
-              Orders: {orders}
-            </motion.p>
-          )}
+  <Youtube size={14} className="text-red-500 fill-red-500" />
 
-          <motion.div 
-            variants={buttonVariants}
-            className="flex items-center gap-2 pt-1"
-          >
-            <motion.span 
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className="bg-yellow-400 text-black text-xs px-2 py-[2px] rounded"
-            >
-              {rating.toFixed(1)}
-            </motion.span>
+  {subscribers}
+</div>
 
-            <motion.span 
-              className="text-yellow-400 text-sm flex"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              {"★".repeat(5)}
-            </motion.span>
-          </motion.div>
-        </motion.div>
+      <p className="text-xs text-gray-700 mt-1">
+        {category}
+      </p>
 
-        {/* ACTION BUTTONS */}
-        <motion.div 
-          className="flex flex-col justify-center gap-3 text-xs"
-          variants={{
-            show: { transition: { staggerChildren: 0.05 } }
-          }}
-        >
-          <motion.div 
-            variants={buttonVariants}
-            whileHover="hover"
-            className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full cursor-pointer"
-          >
-            📹 {videoPrice}
-          </motion.div>
+      <p className="text-xs text-gray-600 leading-[16px]">
+        {languages}
+      </p>
 
-          <motion.div 
-            variants={buttonVariants}
-            whileHover="hover"
-            className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full cursor-pointer"
-          >
-            📞 {callPrice}
-          </motion.div>
+      <p className="text-xs text-gray-600 leading-[16px]">
+        {location}
+      </p>
 
-          <motion.div 
-            variants={buttonVariants}
-            whileHover="hover"
-            className="flex items-center gap-2 border border-green-500 text-green-600 px-3 py-1 rounded-full cursor-pointer"
-          >
-            💬 {chatPrice}
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  );
+      <p className="text-xs text-gray-600 leading-[16px] pb-2">
+        Orders: {orders}
+      </p>
+
+      {/* RATING */}
+      <div className="flex items-center">
+
+  <div className="bg-[#FFC107] text-black text-[11px] font-semibold px-2 py-[1px] rounded-l-sm">
+    {rating.toFixed(1)}
+  </div>
+
+  <div className="bg-[#3a3a3a] text-[#FFC107] text-[11px] px-2 py-[1px] rounded-r-sm tracking-[2px]">
+    ★★★★★
+  </div>
+
+</div>
+
+    </div>
+  </div>
+
+  {/* RIGHT ACTIONS */}
+  <div className="flex flex-col justify-center pr-5 gap-4">
+
+    <div className="flex items-center gap-2 text-black text-xs">
+      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+        <Video size={16}/>
+      </div>
+      {videoPrice}
+    </div>
+
+    <div className="flex items-center gap-2 text-black text-xs">
+      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+        <Phone size={16}/>
+      </div>
+      {callPrice}
+    </div>
+
+    <div className="flex items-center gap-2 text-black text-xs">
+      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+        <MessageSquare size={16}/>
+      </div>
+      {chatPrice}
+    </div>
+
+  </div>
+
+</div>
+
+
+);
 }
