@@ -410,9 +410,178 @@
 // }
 
 
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { AnimatePresence, motion } from "framer-motion";
+// import Container from "@/components/layout/Container";
+// import Section from "@/components/layout/Section";
+// import Image from "next/image";
+// import { fadeUp } from "@/lib/animations";
+// import talk1 from '../../../../public/images/hero/talk-step1.png'
+// import talk2 from '../../../../public/images/hero/talk-step2.png'
+// import talk3 from '../../../../public/images/hero/talk-step3.png'
+
+// const steps = [
+//   {
+//     title: "Discover Your Favorite Celebrities",
+//     desc: "Browse a wide range of verified celebrities from actors, singers, creators, and sports stars.",
+//   },
+//   {
+//     title: "Schedule Your Interaction",
+//     desc: "Select your preferred interaction type — audio call, video call, or chat.",
+//   },
+//   {
+//     title: "Experience the Moment",
+//     desc: "Join the session at your scheduled time and interact with your favorite celebrity.",
+//   },
+// ];
+
+// export default function HowCelebsWork() {
+//   const [activeStep, setActiveStep] = useState(1);
+//   const [isPaused, setIsPaused] = useState(false);
+
+//   useEffect(() => {
+//     if (isPaused) return;
+//     const id = window.setInterval(() => {
+//       setActiveStep((prev) => (prev + 1) % steps.length);
+//     }, 2200);
+//     return () => window.clearInterval(id);
+//   }, [isPaused]);
+
+//   return (
+//     <Section>
+//       <Container>
+
+//         {/* Heading */}
+//         <motion.div
+//           variants={fadeUp}
+//           initial="hidden"
+//           whileInView="visible"
+//           viewport={{ once: true }}
+//           className="text-center mb-20"
+//         >
+//           <h2
+//             className="text-[30px] md:text-[44px] lg:text-[48px] font-semibold"
+//             style={{
+//               background: "var(--gradient-cta)",
+//               WebkitBackgroundClip: "text",
+//               WebkitTextFillColor: "transparent",
+//             }}
+//           >
+//             How Celebs talks work
+//           </h2>
+
+//           <p className="text-[var(--neutral-600)] mt-3 max-w-[520px] mx-auto text-sm md:text-base">
+//             A few mindful moments can change your day.
+//           </p>
+//         </motion.div>
+
+//         <div className="grid lg:grid-cols-2 gap-14 items-start">
+
+//           {/* LEFT STEPS */}
+//           <div
+//             className="space-y-6 max-w-[520px]"
+//             onMouseEnter={() => setIsPaused(true)}
+//             onMouseLeave={() => setIsPaused(false)}
+//           >
+
+//             {steps.map((step, index) => {
+
+//               const active = activeStep === index;
+
+//               return (
+//                 <motion.div
+//                   key={index}
+//                   onMouseEnter={() => setActiveStep(index)}
+//                   onClick={() => setActiveStep(index)}
+//                   className={`p-5 rounded-2xl cursor-pointer transition-all duration-300 ${
+//                     active ? "shadow-lg" : ""
+//                   }`}
+//                   style={
+//                     active
+//                       ? { background: "var(--gradient-card)" }
+//                       : { background: "white" }
+//                   }
+//                 >
+//                   <h3 className="font-semibold text-[18px] mb-2">
+//                     {step.title}
+//                   </h3>
+
+//                   <p className="text-[14px] text-[var(--neutral-700)]">
+//                     {step.desc}
+//                   </p>
+//                 </motion.div>
+//               );
+//             })}
+
+//           </div>
+
+//           {/* RIGHT PHONES */}
+//           <div className="relative w-full min-h-[420px] md:min-h-[520px] flex items-center justify-center overflow-visible">
+//             <motion.div
+//               key={`rear-${activeStep}`}
+//               initial={{ opacity: 0, x: 90, rotate: 12, scale: 0.92 }}
+//               animate={{ opacity: 0.72, x: 74, rotate: 10, scale: 0.9 }}
+//               transition={{ duration: 0.55, ease: "easeInOut" }}
+//               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+//             >
+//               <Image
+//                 src={talk3}
+//                 alt="rear-phone"
+//                 width={260}
+//                 height={520}
+//                 className="w-[165px] md:w-[210px]"
+//                 priority
+//               />
+//             </motion.div>
+
+//             <AnimatePresence mode="wait">
+//               <motion.div
+//                 key={activeStep}
+//                 initial={{
+//                   opacity: 0,
+//                   x: activeStep === 0 ? -90 : 90,
+//                   y: 12,
+//                   rotate: activeStep === 0 ? -10 : 10,
+//                   scale: 0.92,
+//                 }}
+//                 animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+//                 exit={{
+//                   opacity: 0,
+//                   x: activeStep === 2 ? -90 : 90,
+//                   y: 8,
+//                   rotate: activeStep === 2 ? -8 : 8,
+//                   scale: 0.94,
+//                 }}
+//                 transition={{ duration: 0.62, ease: "easeInOut" }}
+//                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+//               >
+//                 <Image
+//                   src={activeStep === 0 ? talk1 : activeStep === 1 ? talk2 : talk3}
+//                   alt={`phone-${activeStep + 1}`}
+//                   width={280}
+//                   height={560}
+//                   className="w-[190px] md:w-[240px]"
+//                   priority
+//                 />
+//               </motion.div>
+//             </AnimatePresence>
+
+//             <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 md:h-28 bg-gradient-to-t from-white to-transparent z-30" />
+//           </div>
+
+//         </div>
+
+//       </Container>
+//     </Section>
+//   );
+// }
+
+
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Container from "@/components/layout/Container";
 import Section from "@/components/layout/Section";
@@ -437,20 +606,50 @@ const steps = [
   },
 ];
 
+// Match reference motion progression: 3 phones -> 2 phones -> 1 phone.
+const phoneConfigs = [
+  [
+    { x: -18, y: 4, rotate: -6, scale: 1.02, opacity: 1, zIndex: 30 },
+    { x: 44, y: 6, rotate: 5, scale: 0.97, opacity: 0.92, zIndex: 22 },
+    { x: 116, y: 12, rotate: 12, scale: 0.88, opacity: 0.75, zIndex: 16 },
+  ],
+  [
+    { x: -120, y: 10, rotate: -10, scale: 0.9, opacity: 0, zIndex: 8 },
+    { x: -6, y: 2, rotate: -2, scale: 1.02, opacity: 1, zIndex: 30 },
+    { x: 86, y: 8, rotate: 10, scale: 0.92, opacity: 0.82, zIndex: 18 },
+  ],
+  [
+    { x: -170, y: 16, rotate: -14, scale: 0.84, opacity: 0, zIndex: 5 },
+    { x: -110, y: 10, rotate: -9, scale: 0.88, opacity: 0, zIndex: 7 },
+    { x: 8, y: 0, rotate: 0, scale: 1.03, opacity: 1, zIndex: 30 },
+  ],
+];
+
 export default function HowCelebsWork() {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const phones = [talk1, talk2, talk3];
+
+  useEffect(() => {
+    if (isPaused) return;
+    const id = window.setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 2800);
+    return () => window.clearInterval(id);
+  }, [isPaused]);
 
   return (
     <Section>
       <Container>
 
-        {/* Heading */}
+        {/* Heading — left aligned like the video */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="mb-16"
         >
           <h2
             className="text-[30px] md:text-[44px] lg:text-[48px] font-semibold"
@@ -463,115 +662,78 @@ export default function HowCelebsWork() {
             How Celebs talks work
           </h2>
 
-          <p className="text-[var(--neutral-600)] mt-3 max-w-[520px] mx-auto text-sm md:text-base">
+          <p className="text-[var(--neutral-600)] mt-3 max-w-[520px] text-sm md:text-base">
             A few mindful moments can change your day.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
 
           {/* LEFT STEPS */}
-          <div className="space-y-6 max-w-[520px]">
-
+          <div
+            className="space-y-2 max-w-[520px]"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
             {steps.map((step, index) => {
-
               const active = activeStep === index;
-
               return (
                 <motion.div
                   key={index}
                   onMouseEnter={() => setActiveStep(index)}
+                  onClick={() => setActiveStep(index)}
                   className={`p-6 rounded-[22px] cursor-pointer transition-all duration-300 ${
-                    active ? "shadow-xl scale-[1.02]" : ""
+                    active ? "shadow-lg scale-[1.02]" : "hover:bg-gray-50"
                   }`}
                   style={
                     active
                       ? { background: "var(--gradient-card)" }
-                      : { background: "white" }
+                      : { background: "transparent" }
                   }
                 >
-                  <h3 className="font-semibold text-[18px] mb-2">
+                  <h3 className={`font-semibold text-[18px] mb-2 transition-colors duration-300 ${active ? "text-[var(--neutral-1000)]" : "text-[var(--neutral-500)]"}`}>
                     {step.title}
                   </h3>
-
-                  <p className="text-[14px] text-[var(--neutral-700)]">
+                  <p className={`text-[14px] transition-colors duration-300 ${active ? "text-[var(--neutral-700)]" : "text-[var(--neutral-400)]"}`}>
                     {step.desc}
                   </p>
                 </motion.div>
               );
             })}
-
           </div>
 
-          {/* RIGHT PHONES */}
-          {/* RIGHT PHONES */}
-<div className="relative w-full min-h-[420px] md:min-h-[520px] flex items-center justify-center">
-
-  {/* PHONE 1 */}
-  <motion.div
-    animate={{
-      x: activeStep === 0 ? 0 : -90,
-      rotate: activeStep === 0 ? 0 : -15,
-      scale: activeStep === 0 ? 1.05 : 0.9,
-      opacity: activeStep === 0 ? 1 : 0.7,
-      zIndex: activeStep === 0 ? 20 : 1
-    }}
-    transition={{ duration: 0.5 }}
-    className="absolute"
-  >
-    <Image
-      src={talk1}
-      alt="phone1"
-      width={260}
-      height={520}
-      className="w-[180px] md:w-[220px]"
-      priority
-    />
-  </motion.div>
-
-  {/* PHONE 2 */}
-  <motion.div
-    animate={{
-      scale: activeStep === 1 ? 1.08 : 0.92,
-      opacity: activeStep === 1 ? 1 : 0.7,
-      zIndex: activeStep === 1 ? 20 : 2
-    }}
-    transition={{ duration: 0.5 }}
-    className="absolute"
-  >
-    <Image
-      src={talk2}
-      alt="phone2"
-      width={260}
-      height={520}
-      className="w-[200px] md:w-[240px]"
-      priority
-    />
-  </motion.div>
-
-  {/* PHONE 3 */}
-  <motion.div
-    animate={{
-      x: activeStep === 2 ? 0 : 90,
-      rotate: activeStep === 2 ? 0 : 15,
-      scale: activeStep === 2 ? 1.05 : 0.9,
-      opacity: activeStep === 2 ? 1 : 0.7,
-      zIndex: activeStep === 2 ? 20 : 1
-    }}
-    transition={{ duration: 0.5 }}
-    className="absolute"
-  >
-    <Image
-      src={talk3}
-      alt="phone3"
-      width={260}
-      height={520}
-      className="w-[180px] md:w-[220px]"
-      priority
-    />
-  </motion.div>
-
-</div>
+          {/* RIGHT PHONES — all 3 always visible, layered */}
+          <div className="relative w-full h-[480px] md:h-[560px] flex items-center justify-center overflow-visible">
+            {phones.map((src, i) => {
+              const cfg = phoneConfigs[activeStep][i];
+              return (
+                <motion.div
+                  key={i}
+                  animate={{
+                    x: cfg.x,
+                    y: cfg.y,
+                    rotate: cfg.rotate,
+                    scale: cfg.scale,
+                    opacity: cfg.opacity,
+                    zIndex: cfg.zIndex,
+                  }}
+                  transition={{ duration: 0.62, ease: "easeInOut" }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  style={{ zIndex: cfg.zIndex }}
+                >
+                  <Image
+                    src={src}
+                    alt={`step-${i + 1}`}
+                    width={260}
+                    height={520}
+                    className="w-[200px] md:w-[240px] drop-shadow-2xl"
+                    priority
+                  />
+                </motion.div>
+              );
+            })}
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 md:h-28 bg-gradient-to-t from-white to-transparent z-40" />
+          </div>
 
         </div>
 
