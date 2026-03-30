@@ -2,7 +2,7 @@ import { Variants } from "framer-motion";
 
 // Enhanced spring configurations for smoother animations
 const smoothSpring = {
-  type: "spring",
+   type: "spring" as const,
   stiffness: 100,      // Increased for responsiveness
   damping: 30,         // Increased for less bounce
   mass: 0.5,           // Reduced mass for faster response
@@ -10,7 +10,7 @@ const smoothSpring = {
 } as const;
 
 const gentleSpring = {
-  type: "spring",
+   type: "spring" as const,
   stiffness: 80,
   damping: 25,
   mass: 0.8,
@@ -166,7 +166,7 @@ export const cascadeContainer: Variants = {
 export const hoverScale = {
   scale: 1.05,
   transition: {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 400,
     damping: 25,
   },
@@ -175,7 +175,7 @@ export const hoverScale = {
 export const hoverLift = {
   y: -5,
   transition: {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 400,
     damping: 25,
   },

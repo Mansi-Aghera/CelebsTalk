@@ -355,7 +355,7 @@ export default function Hero() {
 
             {/* CTA */}
             <motion.div variants={fadeUp}>
-              <Button variant="outline-primary" size="lg" className="rounded-full">
+              <Button variant="outline-primary" size="lg" className="rounded-full" href="/explore">
                 Explore Celebrities →
               </Button>
             </motion.div>

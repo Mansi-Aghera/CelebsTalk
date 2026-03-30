@@ -303,7 +303,8 @@ import { cn } from "@/lib/utils";
 import Button from "../ui/Button";
 
 const navLinks = [
-  { label: "Explore", href: "/" },
+  { label: "", href: "/" },
+  { label: "Explore", href: "/explore" },
   { label: "Categories", href: "#" },
   { label: "How it works", href: "#" },
   { label: "Blog", href: "#" },

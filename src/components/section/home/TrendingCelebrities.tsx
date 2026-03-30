@@ -310,7 +310,7 @@ return ( <Section> <Container>
       viewport={{ once: true, amount: 0.2 }}
       className="flex justify-center mt-12"
     >
-      <Button variant="outline-primary" size="lg" className="rounded-full">
+      <Button variant="outline-primary" size="lg" className="rounded-full" href="/explore">
         View All Celebrities →
       </Button>
     </motion.div>
