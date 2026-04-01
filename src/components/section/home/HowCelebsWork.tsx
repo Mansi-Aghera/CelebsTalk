@@ -234,38 +234,37 @@ const phoneConfigs = [
 ];
 
 export default function HowCelebsWork() {
-
   const phones = [talk1, talk2, talk3];
-const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
 
-const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-useEffect(() => {
-  const check = () => setIsMobile(window.innerWidth < 640);
-  check();
-  window.addEventListener("resize", check);
-  return () => window.removeEventListener("resize", check);
-}, []);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-const getPhoneConfigs = () => {
-  const factor = isMobile ? 0.6 : 1;
+  const getPhoneConfigs = () => {
+    const factor = isMobile ? 0.6 : 1;
 
-  return phoneConfigs.map((step) =>
-    step.map((cfg) => ({
-      ...cfg,
-      x: cfg.x * factor,
-      y: cfg.y * factor,
-    }))
-  );
-};
+    return phoneConfigs.map((step) =>
+      step.map((cfg) => ({
+        ...cfg,
+        x: cfg.x * factor,
+        y: cfg.y * factor,
+      })),
+    );
+  };
 
-const responsiveConfigs = getPhoneConfigs();
+  const responsiveConfigs = getPhoneConfigs();
 
-useState(() => {
-  if (typeof window !== "undefined") {
-    setIsMobile(window.innerWidth < 640);
-  }
-});
+  useState(() => {
+    if (typeof window !== "undefined") {
+      setIsMobile(window.innerWidth < 640);
+    }
+  });
   return (
     <Section>
       <Container>
@@ -295,7 +294,6 @@ useState(() => {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14 lg:gap-16 items-center">
-          
           {/* LEFT STEPS */}
           <div
             className="space-y-2 max-w-full lg:max-w-[520px]"

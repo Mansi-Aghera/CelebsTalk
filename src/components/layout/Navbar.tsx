@@ -305,7 +305,7 @@ import Button from "../ui/Button";
 const navLinks = [
   { label: "", href: "/" },
   { label: "Explore", href: "/explore" },
-  { label: "Categories", href: "#" },
+  { label: "Categories", href: "/profile" },
   { label: "How it works", href: "#" },
   { label: "Blog", href: "#" },
   { label: "For Celebrity", href: "#" },

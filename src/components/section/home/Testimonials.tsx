@@ -1,5 +1,3 @@
-
-
 // "use client";
 
 // import { motion } from "framer-motion";
@@ -237,16 +235,15 @@ export default function Testimonials() {
     <Section className="py-24">
       <Container>
         <div className="relative border border-[var(--primary-200)] rounded-[40px] px-6 md:px-10 py-14 md:py-16">
-
           {/* Heading */}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ 
+            transition={{
               type: "spring",
               stiffness: 100,
               damping: 20,
-              mass: 0.5
+              mass: 0.5,
             }}
             viewport={{ once: true }}
             className="text-center text-[26px] md:text-[38px] font-semibold max-w-[900px] mx-auto leading-tight"
@@ -257,21 +254,20 @@ export default function Testimonials() {
               backgroundClip: "text",
             }}
           >
-            Celebs-Talks connects fans with their favorite celebrities
-            through personalized wishes, video calls, and live interactions
+            Celebs-Talks connects fans with their favorite celebrities through
+            personalized wishes, video calls, and live interactions
           </motion.h2>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-12 md:gap-20 mt-10 text-center">
-
-            <motion.div 
-              initial={{opacity:0, y:15}} 
-              whileInView={{opacity:1, y:0}} 
-              transition={{ 
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{
                 type: "spring",
                 stiffness: 100,
                 damping: 20,
-                delay: 0.1 
+                delay: 0.1,
               }}
             >
               <p className="text-3xl md:text-4xl font-semibold">
@@ -282,14 +278,14 @@ export default function Testimonials() {
               </p>
             </motion.div>
 
-            <motion.div 
-              initial={{opacity:0, y:15}} 
-              whileInView={{opacity:1, y:0}} 
-              transition={{ 
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{
                 type: "spring",
                 stiffness: 100,
                 damping: 20,
-                delay: 0.2 
+                delay: 0.2,
               }}
             >
               <p className="text-3xl md:text-4xl font-semibold">
@@ -300,38 +296,37 @@ export default function Testimonials() {
               </p>
             </motion.div>
 
-            <motion.div 
-              initial={{opacity:0, y:15}} 
-              whileInView={{opacity:1, y:0}} 
-              transition={{ 
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{
                 type: "spring",
                 stiffness: 100,
                 damping: 20,
-                delay: 0.3 
+                delay: 0.3,
               }}
             >
               <p className="text-3xl md:text-4xl font-semibold">
-                <CountUp end={10} duration={2} />L+
+                <CountUp end={10} duration={2} />
+                L+
               </p>
               <p className="text-sm text-[var(--neutral-600)]">
                 Active user on celebs-talks
               </p>
             </motion.div>
-
           </div>
 
           {/* Testimonials */}
           <div className="relative mt-12">
-
             {/* LEFT BUTTON */}
             <motion.button
               onClick={() => scroll("left")}
               initial={{ opacity: 0, x: -10 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 100,
-                damping: 20
+                damping: 20,
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -350,11 +345,11 @@ export default function Testimonials() {
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ 
+                  transition={{
                     type: "spring",
                     stiffness: 100,
                     damping: 20,
-                    delay: index * 0.1 
+                    delay: index * 0.1,
                   }}
                   viewport={{ once: true }}
                   className="min-w-[240px] sm:min-w-[280px] md:min-w-[340px]"
@@ -369,10 +364,10 @@ export default function Testimonials() {
               onClick={() => scroll("right")}
               initial={{ opacity: 0, x: 10 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 100,
-                damping: 20
+                damping: 20,
               }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
@@ -380,19 +375,17 @@ export default function Testimonials() {
             >
               <ChevronRight size={18} />
             </motion.button>
-
           </div>
 
           {/* Download Section */}
           <div className="text-center mt-12">
-
             <motion.h3
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 stiffness: 100,
-                damping: 20
+                damping: 20,
               }}
               className="text-xl md:text-2xl font-semibold"
               style={{
@@ -406,15 +399,14 @@ export default function Testimonials() {
             </motion.h3>
 
             <div className="flex justify-center gap-6 mt-6 flex-wrap">
-
-              <motion.button 
+              <motion.button
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 20,
-                  delay: 0.1
+                  delay: 0.1,
                 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -429,14 +421,14 @@ export default function Testimonials() {
                 Get it on Google Play
               </motion.button>
 
-              <motion.button 
+              <motion.button
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 100,
                   damping: 20,
-                  delay: 0.2
+                  delay: 0.2,
                 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -450,11 +442,8 @@ export default function Testimonials() {
                 />
                 Available on the App Store
               </motion.button>
-
             </div>
-
           </div>
-
         </div>
       </Container>
     </Section>

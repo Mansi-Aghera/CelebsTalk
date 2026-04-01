@@ -36,7 +36,6 @@ export default function LatestInsights() {
   return (
     <Section className="py-24">
       <Container>
-
         {/* Heading */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -57,8 +56,8 @@ export default function LatestInsights() {
           </h2>
 
           <p className="text-[var(--neutral-600)] mt-2 text-sm max-w-[520px] mx-auto">
-            A few mindful moments can change your day Bloom helps you
-            reset, relax, and grow with ease.
+            A few mindful moments can change your day Bloom helps you reset,
+            relax, and grow with ease.
           </p>
         </motion.div>
 
@@ -93,7 +92,6 @@ export default function LatestInsights() {
             </motion.div>
           ))}
         </motion.div>
-
       </Container>
     </Section>
   );
