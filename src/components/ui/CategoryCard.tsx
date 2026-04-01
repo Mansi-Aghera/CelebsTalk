@@ -86,7 +86,7 @@ export default function CategoryCard({ icon, title }: CategoryCardProps) {
         }
       }}
       className="flex flex-col items-center justify-center
-      w-[120px] h-[120px] md:w-[140px] md:h-[140px]
+      w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] md:w-[140px] md:h-[140px]
       rounded-2xl border border-[var(--neutral-200)]
       bg-white shadow-sm hover:shadow-md
       transition-all duration-300"

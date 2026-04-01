@@ -343,7 +343,7 @@ useState(() => {
           </div>
 
           {/* RIGHT PHONES */}
-          <div className="relative w-full h-[320px] sm:h-[320px] md:h-[460px] lg:h-[520px] flex items-center justify-center overflow-visible">
+          <div className="relative w-full min-h-[300px] sm:min-h-[320px] md:min-h-[450px] lg:min-h-[500px] flex items-center justify-center overflow-visible">
             {phones.map((src, i) => {
               const cfg = responsiveConfigs[activeStep][i];
               return (

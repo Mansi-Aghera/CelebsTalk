@@ -357,7 +357,7 @@ export default function Testimonials() {
                     delay: index * 0.1 
                   }}
                   viewport={{ once: true }}
-                  className="min-w-[280px] md:min-w-[340px]"
+                  className="min-w-[240px] sm:min-w-[280px] md:min-w-[340px]"
                 >
                   <TestimonialCard {...item} />
                 </motion.div>

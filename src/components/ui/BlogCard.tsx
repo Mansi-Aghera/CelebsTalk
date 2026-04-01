@@ -23,7 +23,7 @@ export default function BlogCard({
       className="group"
     >
       {/* Image */}
-      <div className="relative w-full h-[240px] rounded-xl overflow-hidden">
+      <div className="relative w-full h-[200px] sm:h-[220px] md:h-[240px] rounded-xl overflow-hidden">
         <Image
           src={image}
           alt={title}
