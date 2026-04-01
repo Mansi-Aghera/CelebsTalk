@@ -1,133 +1,268 @@
 
 
+// "use client";
+
+// import Image from "next/image";
+// import { Video, Phone, MessageSquare, Youtube } from "lucide-react";
+
+// interface CelebrityCardProps {
+// name: string;
+// image: string;
+// category: string;
+// languages: string;
+// location: string;
+// orders: number;
+// subscribers: string;
+// rating: number;
+// videoPrice: string;
+// callPrice: string;
+// chatPrice: string;
+// }
+
+// export default function CelebrityCard({
+// name,
+// image,
+// category,
+// languages,
+// location,
+// orders,
+// subscribers,
+// rating = 5,
+// videoPrice,
+// callPrice,
+// chatPrice,
+// }: CelebrityCardProps) {
+// return ( <div className="flex justify-between items-stretch bg-white border border-[#bdbdbd] rounded-xl w-full max-w-[720px] overflow-hidden">
+
+
+//   {/* LEFT SIDE */}
+//   <div className="flex gap-4 items-stretch">
+
+//     {/* IMAGE */}
+//    <div className="relative w-[180px] min-h-[130px] overflow-hidden rounded-l-xl">
+//   <Image
+//     src={image}
+//     alt={name}
+//     fill
+//     className="object-cover"
+//   />
+// </div>
+
+//     {/* DETAILS */}
+//     <div className="text-sm py-4  ">
+
+//       {/* NAME */}
+//       <div className="flex items-center gap-2 font-semibold text-[16px]">
+//         {name}
+//         <span className="flex items-center justify-center w-[16px] h-[16px] bg-[#3b82f6] text-white text-[10px] rounded-full">
+//   ✓
+// </span>
+//       </div>
+
+//       {/* YOUTUBE */}
+//       <div className="flex items-center gap-1 text-xs text-gray-600 mt-[2px] leading-[16px]">
+//   <span>YouTube :</span>
+
+//   <Youtube size={14} className="text-red-500 fill-red-500" />
+
+//   {subscribers}
+// </div>
+
+//       <p className="text-xs text-gray-700 mt-1">
+//         {category}
+//       </p>
+
+//       <p className="text-xs text-gray-600 leading-[16px]">
+//         {languages}
+//       </p>
+
+//       <p className="text-xs text-gray-600 leading-[16px]">
+//         {location}
+//       </p>
+
+//       <p className="text-xs text-gray-600 leading-[16px] pb-2">
+//         Orders: {orders}
+//       </p>
+
+//       {/* RATING */}
+//       <div className="flex items-center">
+
+//   <div className="bg-[#FFC107] text-black text-[11px] font-semibold px-2 py-[1px] rounded-l-sm">
+//     {rating.toFixed(1)}
+//   </div>
+
+//   <div className="bg-[#3a3a3a] text-[#FFC107] text-[11px] px-2 py-[1px] rounded-r-sm tracking-[2px]">
+//     ★★★★★
+//   </div>
+
+// </div>
+
+//     </div>
+//   </div>
+
+//   {/* RIGHT ACTIONS */}
+//   <div className="flex flex-col justify-center pr-5 gap-4">
+
+//     <div className="flex items-center gap-2 text-black text-xs">
+//       <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+//         <Video size={16}/>
+//       </div>
+//       {videoPrice}
+//     </div>
+
+//     <div className="flex items-center gap-2 text-black text-xs">
+//       <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+//         <Phone size={16}/>
+//       </div>
+//       {callPrice}
+//     </div>
+
+//     <div className="flex items-center gap-2 text-black text-xs">
+//       <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
+//         <MessageSquare size={16}/>
+//       </div>
+//       {chatPrice}
+//     </div>
+
+//   </div>
+
+// </div>
+
+
+// );
+// }
+
+
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Video, Phone, MessageSquare, Youtube } from "lucide-react";
+import { fadeUp, hoverLift } from "@/lib/animations";
 
 interface CelebrityCardProps {
-name: string;
-image: string;
-category: string;
-languages: string;
-location: string;
-orders: number;
-subscribers: string;
-rating: number;
-videoPrice: string;
-callPrice: string;
-chatPrice: string;
+  name: string;
+  image: string;
+  category: string;
+  languages: string;
+  location: string;
+  orders: number;
+  subscribers: string;
+  rating: number;
+  videoPrice: string;
+  callPrice: string;
+  chatPrice: string;
 }
 
 export default function CelebrityCard({
-name,
-image,
-category,
-languages,
-location,
-orders,
-subscribers,
-rating = 5,
-videoPrice,
-callPrice,
-chatPrice,
+  name,
+  image,
+  category,
+  languages,
+  location,
+  orders,
+  subscribers,
+  rating = 5,
+  videoPrice,
+  callPrice,
+  chatPrice,
 }: CelebrityCardProps) {
-return ( <div className="flex justify-between items-stretch bg-white border border-[#bdbdbd] rounded-xl w-full max-w-[720px] overflow-hidden">
+  return (
+    <motion.div
+      variants={fadeUp}
+      whileHover={hoverLift}
+      className="flex flex-col sm:flex-row justify-between bg-[var(--neutral-100)] border border-[var(--neutral-200)] rounded-xl w-full overflow-hidden transition-all duration-300"
+    >
+      {/* LEFT SIDE */}
+      <div className="flex gap-3 sm:gap-4 w-full">
 
+        {/* IMAGE */}
+        <div className="relative w-[120px] sm:w-[160px] md:w-[180px] min-h-[120px] sm:min-h-[140px] overflow-hidden rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none">
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+        </div>
 
-  {/* LEFT SIDE */}
-  <div className="flex gap-4 items-stretch">
+        {/* DETAILS */}
+        <div className="text-sm py-3 sm:py-4 pr-2 flex-1">
 
-    {/* IMAGE */}
-   <div className="relative w-[180px] min-h-[130px] overflow-hidden rounded-l-xl">
-  <Image
-    src={image}
-    alt={name}
-    fill
-    className="object-cover"
-  />
-</div>
+          {/* NAME */}
+          <div className="flex items-center gap-2 font-semibold text-sm sm:text-[16px]">
+            {name}
+            <span className="flex items-center justify-center w-[16px] h-[16px] bg-[var(--secondary-200)] text-white text-[10px] rounded-full">
+              ✓
+            </span>
+          </div>
 
-    {/* DETAILS */}
-    <div className="text-sm py-4  ">
+          {/* YOUTUBE */}
+          <div className="flex items-center gap-1 text-[11px] sm:text-xs text-[var(--neutral-600)] mt-[2px] leading-[16px]">
+            <span>YouTube :</span>
+            <Youtube size={14} className="text-red-500 fill-red-500" />
+            {subscribers}
+          </div>
 
-      {/* NAME */}
-      <div className="flex items-center gap-2 font-semibold text-[16px]">
-        {name}
-        <span className="flex items-center justify-center w-[16px] h-[16px] bg-[#3b82f6] text-white text-[10px] rounded-full">
-  ✓
-</span>
+          <p className="text-[11px] sm:text-xs text-[var(--neutral-700)] mt-1">
+            {category}
+          </p>
+
+          <p className="text-[11px] sm:text-xs text-[var(--neutral-600)] leading-[16px]">
+            {languages}
+          </p>
+
+          <p className="text-[11px] sm:text-xs text-[var(--neutral-600)] leading-[16px]">
+            {location}
+          </p>
+
+          <p className="text-[11px] sm:text-xs text-[var(--neutral-600)] leading-[16px] pb-2">
+            Orders: {orders}
+          </p>
+
+          {/* RATING */}
+          <div className="flex items-center">
+            <div className="bg-[var(--yellow-100)] text-black text-[11px] font-semibold px-2 py-[2px] rounded-l-sm">
+              {rating.toFixed(1)}
+            </div>
+
+            <div className="bg-[var(--neutral-1000)] text-[var(--yellow-100)] text-[11px] px-2 py-[2px] rounded-r-sm tracking-[2px]">
+              ★★★★★
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* YOUTUBE */}
-      <div className="flex items-center gap-1 text-xs text-gray-600 mt-[2px] leading-[16px]">
-  <span>YouTube :</span>
+      {/* RIGHT ACTIONS */}
+      <div className="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-3 sm:gap-4 px-4 py-3 sm:py-0 border-t sm:border-t-0 sm:border-l border-[var(--neutral-200)] w-full sm:w-auto">
 
-  <Youtube size={14} className="text-red-500 fill-red-500" />
+        <Action icon={<Video size={16} />} price={videoPrice} />
+        <Action icon={<Phone size={16} />} price={callPrice} />
+        <Action icon={<MessageSquare size={16} />} price={chatPrice} />
 
-  {subscribers}
-</div>
-
-      <p className="text-xs text-gray-700 mt-1">
-        {category}
-      </p>
-
-      <p className="text-xs text-gray-600 leading-[16px]">
-        {languages}
-      </p>
-
-      <p className="text-xs text-gray-600 leading-[16px]">
-        {location}
-      </p>
-
-      <p className="text-xs text-gray-600 leading-[16px] pb-2">
-        Orders: {orders}
-      </p>
-
-      {/* RATING */}
-      <div className="flex items-center">
-
-  <div className="bg-[#FFC107] text-black text-[11px] font-semibold px-2 py-[1px] rounded-l-sm">
-    {rating.toFixed(1)}
-  </div>
-
-  <div className="bg-[#3a3a3a] text-[#FFC107] text-[11px] px-2 py-[1px] rounded-r-sm tracking-[2px]">
-    ★★★★★
-  </div>
-
-</div>
-
-    </div>
-  </div>
-
-  {/* RIGHT ACTIONS */}
-  <div className="flex flex-col justify-center pr-5 gap-4">
-
-    <div className="flex items-center gap-2 text-black text-xs">
-      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
-        <Video size={16}/>
       </div>
-      {videoPrice}
-    </div>
+    </motion.div>
+  );
+}
 
-    <div className="flex items-center gap-2 text-black text-xs">
-      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
-        <Phone size={16}/>
+/* 🔥 REUSABLE ACTION ITEM */
+function Action({
+  icon,
+  price,
+}: {
+  icon: React.ReactNode;
+  price: string;
+}) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.95 }}
+      className="flex items-center gap-2 text-[var(--neutral-900)] text-xs cursor-pointer"
+    >
+      <div className="w-7 h-7 flex items-center justify-center border-2 border-[var(--green-200)] text-[var(--green-200)] rounded-full">
+        {icon}
       </div>
-      {callPrice}
-    </div>
-
-    <div className="flex items-center gap-2 text-black text-xs">
-      <div className="w-7 h-7 flex items-center justify-center border-[2px] border-[#16a34a] text-green-600 rounded-full">
-        <MessageSquare size={16}/>
-      </div>
-      {chatPrice}
-    </div>
-
-  </div>
-
-</div>
-
-
-);
+      {price}
+    </motion.div>
+  );
 }
