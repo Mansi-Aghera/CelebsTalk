@@ -42,6 +42,30 @@
   --green-100: #81d9b4;
   --green-200: #17c16b;
 
+  /* ---------------- BOOKING MODAL ---------------- */
+  --booking-green-bg: #dcfce7;
+  --booking-green-text: #16a34a;
+  --booking-green-hover: #bbf7d0;
+
+  --booking-pink-solid-bg: #ec4899;
+  --booking-pink-solid-hover: #db2777;
+
+  --booking-pink-light-bg: #fce7f3;
+  --booking-pink-light-text: #db2777;
+  --booking-pink-light-hover: #fbcfe8;
+
+  --booking-purple-solid-bg: #a855f7;
+  --booking-purple-solid-hover: #9333ea;
+
+  --booking-border: #eaeaea;
+  --booking-border-dashed: #dfdfdf;
+  --booking-btn-border: #d1d1d1;
+  --booking-progress-bg: #f0f0f0;
+
+  --booking-text-dark: #1e1e1e;
+  --booking-text-muted: #444444;
+  --booking-text-light: #888888;
+
   /* ---------------- WEBSITE GRADIENTS ---------------- */
 
   --gradient-primary: linear-gradient(

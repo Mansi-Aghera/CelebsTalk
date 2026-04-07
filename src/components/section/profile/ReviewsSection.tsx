@@ -1,24 +1,92 @@
 "use client";
 
+import { Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { fadeUp } from "@/lib/animations";
+
+const StarRating = ({ rating, size = 14 }: { rating: number; size?: number }) => {
+  return (
+    <div className="flex gap-[2px]">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star
+          key={star}
+          size={size}
+          fill={star <= rating ? "#ffc107" : "#e5e7eb"}
+          stroke="none"
+        />
+      ))}
+    </div>
+  );
+};
+
+const reviews = [
+  { name: "Sarah K.", date: "2 days ago", rating: 4, text: "Absolutely amazing! Jasmine was so insightful and gave me some fantastic advice for my own Youtube channel." },
+  { name: "Karan M.", date: "2 days ago", rating: 5, text: "Absolutely amazing! Jasmine was so insightful and gave me some fantastic advice for my own Youtube channel." },
+  { name: "Karan M.", date: "2 days ago", rating: 5, text: "Absolutely amazing! Jasmine was so insightful and gave me some fantastic advice for my own Youtube channel." },
+  { name: "Karan M.", date: "2 days ago", rating: 5, text: "Absolutely amazing! Jasmine was so insightful and gave me some fantastic advice for my own Youtube channel." },
+];
+
 export default function ReviewsSection() {
   return (
-    <div className="bg-white border border-[var(--neutral-200)] rounded-[12px] p-4">
-      <h3 className="text-[12px] font-semibold mb-4">
-        Ratings and reviews
+    <motion.div 
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      className="mt-6 flex flex-col w-full overflow-hidden"
+    >
+      <h3 className="text-[16px] font-bold mb-3 text-[#1e1e1e]">
+        Rating and reviews
       </h3>
 
-      <div className="text-[18px] font-semibold">4.1 ★★★★★</div>
+      {/* OVERALL RATING CARD */}
+      <div className="bg-white border border-[#eaeaea] rounded-[16px] p-5 w-full sm:w-[340px] shadow-[0px_2px_15px_rgba(0,0,0,0.02)] mb-4">
+        <h4 className="text-[15px] font-bold text-[#1e1e1e] mb-3">
+          Ratings and reviews
+        </h4>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+        <div className="flex items-center gap-3">
+          <span className="text-[42px] leading-[42px] font-bold text-[#1e1e1e] tracking-tight">4.1</span>
+          <div className="flex flex-col gap-[2px]">
+            <StarRating rating={4} size={16} />
+            <span className="text-[#a0a0a0] text-[12px] font-medium">
+              From 58 ratings
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* INDIVIDUAL REVIEW CARDS HORIZONTAL SCROLL */}
+      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 pt-1 items-stretch">
+        {reviews.map((review, i) => (
           <div
             key={i}
-            className="border border-[var(--neutral-200)] rounded-[10px] p-3 text-[11px]"
+            className="group min-w-[260px] w-[260px] bg-white border border-[#eaeaea] rounded-[16px] p-4 shadow-[0px_2px_15px_rgba(0,0,0,0.02)] flex flex-col justify-between cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:shadow-[0px_8px_16px_rgba(0,0,0,0.06)]"
           >
-            Great experience ⭐⭐⭐⭐⭐
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <p className="font-bold text-[#1e1e1e] text-[14px]">{review.name}</p>
+                <p className="text-[#a0a0a0] text-[11px] font-medium">{review.date}</p>
+              </div>
+              
+              <div className="mb-2">
+                <StarRating rating={review.rating} size={14} />
+              </div>
+              
+              <p className="text-[#777777] text-[13px] leading-[18px]">
+                {review.text}
+              </p>
+            </div>
+            
           </div>
+          
         ))}
+
+        {/* LOAD MORE CARD */}
+        <div className="group min-w-[130px] bg-white border border-[#eaeaea] rounded-[16px] p-4 shadow-[0px_2px_15px_rgba(0,0,0,0.02)] flex flex-col items-center justify-center cursor-pointer transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:shadow-[0px_8px_16px_rgba(0,0,0,0.06)]">
+          <span className="font-bold text-[#1e1e1e] text-[14px]">Load More</span>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
