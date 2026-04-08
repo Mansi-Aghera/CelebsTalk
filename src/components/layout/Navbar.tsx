@@ -306,7 +306,7 @@ const navLinks = [
   { label: "", href: "/" },
   { label: "Explore", href: "/explore" },
   { label: "Categories", href: "/profile" },
-  { label: "How it works", href: "#" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "Blog", href: "#" },
   { label: "For Celebrity", href: "#" },
 ];
@@ -314,6 +314,9 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  // Hide the navbar on the chat page
+  if (pathname?.startsWith("/chat")) return null;
 
   return (
     <header className="w-full fixed left-0 right-0 top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[var(--neutral-200)] overflow-x-hidden">
@@ -364,6 +367,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             <Button
+              href="/chat"
               variant="outline-primary"
               iconLeft={<MessageCircle size={18} />}
             >
@@ -418,6 +422,7 @@ export default function Navbar() {
 
                 <div className="flex flex-col gap-3 pt-4">
                   <Button
+                    href="/chat"
                     variant="outline-primary"
                     iconLeft={<MessageCircle size={18} />}
                     fullWidth

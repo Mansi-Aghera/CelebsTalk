@@ -139,7 +139,13 @@ import { Phone, Mail } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/chat")) return null;
+
   return (
     <footer
       className="text-white pt-28 pb-10"

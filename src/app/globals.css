@@ -109,6 +109,26 @@
 
 --gradient-card: linear-gradient(180deg, #FF67A4 0%, #FFFFFF 100%);
 
+  /* ---------------- DASHBOARD & HOW IT WORKS APP COLORS ---------------- */
+  --dashboard-green-icon-bg: #e8f9f0;
+  --dashboard-green-light-bg: #f4fbf7;
+  --dashboard-green-dark-bg: #1d3b2b;
+
+  --dashboard-purple-icon-1: #a259ff;
+  --dashboard-purple-icon-bg-1: #f4ecff;
+  --dashboard-purple-icon-2: #a855f7;
+  --dashboard-purple-icon-bg-2: #f6eefd;
+  --dashboard-purple-icon-bg-3: #f1e6fc;
+  --dashboard-purple-icon-bg-4: #f6eeff;
+
+  --dashboard-card-purple: #8c00ff;
+  --dashboard-card-purple-blur: #b34dff;
+  --dashboard-card-dark: #2a2b2f;
+
+  --dashboard-btn-purple: #a212ff;
+  --dashboard-btn-purple-hover: #8e0be6;
+  --dashboard-btn-gray-hover: #ebebeb;
+
 }
 
 
