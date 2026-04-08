@@ -181,7 +181,7 @@ export default function Footer() {
 
         {/* FOOTER GRID */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12"
+          className="grid grid-cols-2 lg:grid-cols-5 gap-y-10 gap-x-6 md:gap-12"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -196,7 +196,7 @@ export default function Footer() {
         >
           {/* BRAND */}
           <motion.div
-            className="max-w-[260px]"
+            className="col-span-2 lg:col-span-1 max-w-[260px]"
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0 },
@@ -280,6 +280,7 @@ export default function Footer() {
 
           {/* CONTACT */}
           <motion.div
+            className="col-span-2 md:col-span-1"
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0 },
@@ -303,6 +304,7 @@ export default function Footer() {
 
           {/* DOWNLOAD */}
           <motion.div
+            className="col-span-2 md:col-span-1"
             variants={{
               hidden: { opacity: 0, y: 40 },
               visible: { opacity: 1, y: 0 },
