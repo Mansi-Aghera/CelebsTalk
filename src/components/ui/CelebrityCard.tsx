@@ -137,8 +137,16 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Video, Phone, MessageSquare, Youtube } from "lucide-react";
+import { Video, Phone, MessageSquare, BadgeCheck } from "lucide-react";
 import { fadeUp, hoverLift } from "@/lib/animations";
+
+// Authentic YouTube Icon Component
+const YouTubeIcon = ({ size = 16 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.498-5.814z" fill="#FF0000"/>
+    <path d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#fff"/>
+  </svg>
+);
 
 interface CelebrityCardProps {
   name: string;
@@ -192,15 +200,13 @@ export default function CelebrityCard({
           {/* NAME */}
           <div className="flex items-center gap-2 font-semibold text-sm sm:text-[16px]">
             {name}
-            <span className="flex items-center justify-center w-[16px] h-[16px] bg-[var(--secondary-200)] text-white text-[10px] rounded-full">
-              ✓
-            </span>
+            <BadgeCheck size={18} className="text-[#3b82f6] fill-white" />
           </div>
 
           {/* YOUTUBE */}
           <div className="flex items-center gap-1 text-[11px] sm:text-xs text-[var(--neutral-600)] mt-[2px] leading-[16px]">
             <span>YouTube :</span>
-            <Youtube size={14} className="text-red-500 fill-red-500" />
+            <YouTubeIcon size={16} />
             {subscribers}
           </div>
 
@@ -234,7 +240,7 @@ export default function CelebrityCard({
       </div>
 
       {/* RIGHT ACTIONS */}
-      <div className="flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-3 sm:gap-4 px-4 py-3 sm:py-0 border-t sm:border-t-0 sm:border-l border-[var(--neutral-200)] w-full sm:w-auto">
+      <div className="flex sm:flex-col justify-between sm:justify-center sm:items-start gap-3 sm:gap-4 px-4 py-3 sm:py-0 border-t sm:border-t-0 sm:border-l border-[var(--neutral-200)] w-full sm:w-auto">
 
         <Action icon={<Video size={16} />} price={videoPrice} />
         <Action icon={<Phone size={16} />} price={callPrice} />
