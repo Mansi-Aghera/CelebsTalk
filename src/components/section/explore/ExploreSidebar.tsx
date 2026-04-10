@@ -35,7 +35,7 @@ export default function ExploreSidebar() {
 
       <SidebarSection title="PRICE RANGE" defaultOpen>
         <div className="text-xs text-[var(--neutral-600)] mb-3">
-          ₹ 100 – ₹ 10000
+          â‚¹ 100 â€“ â‚¹ 10000
         </div>
 
         <input
@@ -50,9 +50,9 @@ export default function ExploreSidebar() {
         {[5, 4, 3, 2, 1].map((r, i) => (
           <div key={i} className="flex items-center gap-2 text-sm">
             <div className="flex text-[var(--yellow-100)]">
-              {"★".repeat(r)}
+              {"".repeat(r)}
               <span className="text-[var(--neutral-300)]">
-                {"★".repeat(5 - r)}
+                {"".repeat(5 - r)}
               </span>
             </div>
             <span className="text-[var(--neutral-600)] text-xs">
@@ -81,7 +81,7 @@ export default function ExploreSidebar() {
   );
 }
 
-/* 🔥 COLLAPSIBLE SECTION */
+/* ðŸ”¥ COLLAPSIBLE SECTION */
 function SidebarSection({
   title,
   children,
@@ -119,7 +119,7 @@ function SidebarSection({
   );
 }
 
-/* 🔥 CHECKBOX */
+/* ðŸ”¥ CHECKBOX */
 function Checkbox({ label }: { label: string }) {
   return (
     <label className="flex items-center gap-2 text-sm cursor-pointer">
@@ -132,7 +132,7 @@ function Checkbox({ label }: { label: string }) {
   );
 }
 
-/* 🔥 DIVIDER */
+/* ðŸ”¥ DIVIDER */
 function Divider() {
   return (
     <div className="border-t border-[var(--neutral-200)] my-4" />
