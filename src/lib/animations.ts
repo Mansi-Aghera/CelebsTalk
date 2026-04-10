@@ -2,11 +2,11 @@ import { Variants } from "framer-motion";
 
 // Enhanced spring configurations for smoother animations
 const smoothSpring = {
-   type: "spring" as const,
-  stiffness: 100,      // Increased for responsiveness
-  damping: 30,         // Increased for less bounce
-  mass: 0.5,           // Reduced mass for faster response
-  bounce: 0,           // No bounce for cleaner animations
+  type: "spring" as const,
+  stiffness: 260,       // Increased significantly for snappiness
+  damping: 26,         // Adjusted for clean finish
+  mass: 1,
+  bounce: 0,
 } as const;
 
 const gentleSpring = {
@@ -21,14 +21,14 @@ const gentleSpring = {
 export const fadeUp: Variants = {
   hidden: {
     opacity: 0,
-    y: 30,
+    y: 20,             // Reduced distance for faster feel
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       ...smoothSpring,
-      duration: 0.7,    // Explicit duration for consistency
+      duration: 0.4,    // Faster duration
     },
   },
 };
@@ -42,7 +42,7 @@ export const fadeIn: Variants = {
     opacity: 1,
     transition: {
       ...smoothSpring,
-      duration: 0.5,
+      duration: 0.3,    // Reduced from 0.5
     },
   },
 };
@@ -71,9 +71,9 @@ export const staggerContainer: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.06,      // Reduced for smoother sequence
-      delayChildren: 0,            // NO DELAY - immediate start
-      when: "beforeChildren",       // Ensure container is ready
+      staggerChildren: 0.04,      // Faster cascade
+      delayChildren: 0,
+      when: "beforeChildren",
     },
   },
 };
@@ -176,8 +176,8 @@ export const hoverLift = {
   y: -5,
   transition: {
     type: "spring" as const,
-    stiffness: 400,
-    damping: 25,
+    stiffness: 300,
+    damping: 20,
   },
 };
 

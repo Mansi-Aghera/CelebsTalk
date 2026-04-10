@@ -8,18 +8,26 @@ import HowCelebsWork from "@/components/section/home/HowCelebsWork";
 import LatestInsights from "@/components/section/home/LatestInsights";
 import FAQSection from "@/components/section/home/FAQSection";
 import CTASection from "@/components/section/home/CTASection";
+import { Metadata } from "next";
 
-export default function Page() {
+export const metadata: Metadata = {
+  title: "CelebsTalk | Connect with your Favorite Celebrities",
+  description: "Book video messages, calls, and chats with trending celebrities.",
+};
+
+export default async function Page() {
+
+
   return (
     <>
       <Hero />
-   <TrendingCelebrities />
-   <Testimonials />
-   <BrowseCategory />
-   <HowCelebsWork />
-   <LatestInsights />
-   <FAQSection />
-   <CTASection />
+      <TrendingCelebrities/>
+      <Testimonials />
+      <BrowseCategory />
+      <HowCelebsWork />
+      <LatestInsights />
+      <FAQSection />
+      <CTASection />
     </>
   );
 }
