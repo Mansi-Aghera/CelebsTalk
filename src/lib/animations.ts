@@ -42,7 +42,7 @@ export const fadeIn: Variants = {
     opacity: 1,
     transition: {
       ...smoothSpring,
-      duration: 0.3,    // Reduced from 0.5
+      duration: 0.5,    // Reduced from 0.5
     },
   },
 };
