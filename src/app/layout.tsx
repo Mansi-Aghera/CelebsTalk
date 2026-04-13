@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
+
 import AppShell from "@/components/layout/AppShell";
 
 const plusJakarta = Plus_Jakarta_Sans({
