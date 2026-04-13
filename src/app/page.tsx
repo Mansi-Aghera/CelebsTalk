@@ -10,6 +10,7 @@ import FAQSection from "@/components/section/home/FAQSection";
 import CTASection from "@/components/section/home/CTASection";
 import { Metadata } from "next";
 import { getInfluencers, getCategories } from "@/services/api";
+import { getFAQs } from "@/services/api";
 
 export const metadata: Metadata = {
   title: "CelebsTalk | Connect with your Favorite Celebrities",
@@ -17,10 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const [celebrities, categories] = await Promise.all([
-    getInfluencers(),
-    getCategories(),
-  ]);
+  const [celebrities, categories, faqs] = await Promise.all([
+  getInfluencers(),
+  getCategories(),
+  getFAQs(), // ✅ added
+]);
 
   return (
     <>
@@ -30,7 +32,7 @@ export default async function Page() {
       <BrowseCategory categories={categories} />
       <HowCelebsWork />
       <LatestInsights />
-      <FAQSection />
+      <FAQSection faqs={faqs} />
       <CTASection />
     </>
   );

@@ -188,6 +188,7 @@ interface BrowseCategoryProps {
 }
 
 export default function BrowseCategory({ categories }: BrowseCategoryProps) {
+  console.log("🔥 FRONTEND CATEGORIES:", categories);
   return (
     <Section className="py-24">
       <Container>
@@ -238,14 +239,20 @@ export default function BrowseCategory({ categories }: BrowseCategoryProps) {
             >
               <CategoryCard
                 icon={
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    width={22}
-                    height={22}
-                    className="object-contain"
-                  />
-                }
+  category.image ? (
+    <Image
+      src={category.image}
+      alt={category.name}
+      width={22}
+      height={22}
+      className="object-contain"
+    />
+  ) : (
+    <div className="w-5 h-5 flex items-center justify-center text-xs font-bold">
+      {category.name.charAt(0)}
+    </div>
+  )
+}
                 title={category.name}
               />
             </motion.div>

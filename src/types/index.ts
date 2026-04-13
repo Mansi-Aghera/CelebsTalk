@@ -84,3 +84,10 @@ export interface CategoriesResponse {
   previous: string | null;
   data: Category[];
 }
+
+export interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+}
+

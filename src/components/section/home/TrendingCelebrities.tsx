@@ -231,7 +231,7 @@ export default function TrendingCelebrities({
             className="rounded-full"
             href="/explore"
           >
-            View All Celebrities
+            View All Celebrities →
           </Button>
         </motion.div>
       </Container>

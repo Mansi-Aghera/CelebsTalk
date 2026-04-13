@@ -214,7 +214,12 @@ function CelebrityGrid({ data, hideHeader }: Props) {
         animate="visible"
         className="grid grid-cols-1 lg:grid-cols-2 gap-6"
       >
-        {currentData.map((celeb) => (
+        {currentData.length === 0 ? (
+  <div className="col-span-full text-center py-16 text-[var(--neutral-600)]">
+    No celebrities found for selected category 😕
+  </div>
+) : (
+  currentData.map((celeb) => (
           <motion.div
             key={celeb.id}
             variants={fadeUp}
@@ -235,7 +240,9 @@ function CelebrityGrid({ data, hideHeader }: Props) {
               chatPrice={`₹${celeb.price_per_min_chat}/min`}
             />
           </motion.div>
-        ))}
+        
+        ))
+        )}
       </motion.div>
 
       {/* PAGINATION */}

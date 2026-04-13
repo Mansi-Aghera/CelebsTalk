@@ -1,12 +1,15 @@
 // services/api.ts — BASE_URL lives ONLY here
 
-import { Influencer, InfluencersResponse, Category, CategoriesResponse } from "@/types";
+import { Influencer, InfluencersResponse, Category, CategoriesResponse, FAQ } from "@/types";
 
 const BASE_URL = "https://celebstalks.pythonanywhere.com";
 
 // ─── Generic Fetch ────────────────────────────────────────
 export const fetchAPI = async <T = unknown>(endpoint: string): Promise<T> => {
-  const res = await fetch(`${BASE_URL}/${endpoint}`, { next: { revalidate: 3600 } });
+const res = await fetch(`${BASE_URL}/${endpoint}`, {
+  cache: "no-store", // 🚀 ALWAYS FRESH DATA
+});
+  
 
   if (!res.ok) {
     throw new Error(`API Error: ${res.status}`);
@@ -19,10 +22,7 @@ export const fetchAPI = async <T = unknown>(endpoint: string): Promise<T> => {
 const cache: Record<string, Promise<unknown>> = {};
 
 function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-  if (!cache[key]) {
-    cache[key] = fetcher();
-  }
-  return cache[key] as Promise<T>;
+  return fetcher(); // 🚀 NO CACHE
 }
 
 // ─── Influencers ──────────────────────────────────────────
@@ -41,12 +41,23 @@ export function getInfluencers(): Promise<Influencer[]> {
 // ─── Categories ───────────────────────────────────────────
 export function getCategories(): Promise<Category[]> {
   return cachedFetch("categories", async () => {
-    const res = await fetchAPI<CategoriesResponse>("category/");
+    const res = await fetchAPI<CategoriesResponse>("category/"); // ✅ your correct endpoint
 
-    // Prepend BASE_URL to image paths so no other file needs it
     return res.data.map((cat) => ({
       ...cat,
-      image: `${BASE_URL}${cat.image}`,
+      image: cat.image
+        ? `${BASE_URL}${cat.image}`
+        : "/icons/default-category.png", // ✅ fallback image
     }));
+  });
+}
+
+// -----------faqs
+
+export function getFAQs(): Promise<FAQ[]> {
+  return cachedFetch("faqs", async () => {
+    const res = await fetchAPI<{ data: FAQ[] }>("faqs/");
+
+    return res.data;
   });
 }
