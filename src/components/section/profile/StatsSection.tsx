@@ -2,14 +2,35 @@
 
 import { motion } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/lib/animations";
+import { Influencer } from "@/types";
 
-export default function StatsSection() {
+export default function StatsSection({
+  influencer,
+}: {
+  influencer?: Influencer;
+}) {
   const stats = [
-    { value: "75K", label: "Minute Talked" },
-    { value: "4.1", label: "Avg Rating" },
-    { value: "58", label: "Total Reviews" },
-    { value: "58", label: "Total Reviews" },
-  ];
+  {
+    value: influencer?.completed_session_count
+      ? `${influencer.completed_session_count}`
+      : "0",
+    label: "Minute Talked",
+  },
+  {
+    value: influencer?.avg_rating
+      ? influencer.avg_rating.toFixed(1)
+      : "0",
+    label: "Avg Rating",
+  },
+  {
+    value: influencer?.total_reviews ?? "",
+    label: "Total Reviews",
+  },
+  {
+    value: influencer?.total_request_count ?? "",
+    label: "Total Reviews",
+  },
+];
 
   return (
     <motion.div 

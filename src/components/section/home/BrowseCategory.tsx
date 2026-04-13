@@ -188,7 +188,6 @@ interface BrowseCategoryProps {
 }
 
 export default function BrowseCategory({ categories }: BrowseCategoryProps) {
-  console.log("🔥 FRONTEND CATEGORIES:", categories);
   return (
     <Section className="py-24">
       <Container>

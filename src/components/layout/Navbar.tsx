@@ -305,7 +305,7 @@ import Button from "../ui/Button";
 const navLinks = [
   { label: "", href: "/" },
   { label: "Explore", href: "/explore" },
-  { label: "Categories", href: "/profile" },
+  { label: "Categories", href: "#" },
   { label: "How it works", href: "/how-it-works" },
   { label: "Blog", href: "#" },
   { label: "For Celebrity", href: "#" },
@@ -381,7 +381,7 @@ export default function Navbar() {
               Call
             </Button>
 
-            <Button variant="soft" href="/login">
+            <Button variant="soft">
               Login
             </Button>
           </div>
