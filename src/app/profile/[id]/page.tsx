@@ -238,16 +238,18 @@ import { MessageSquare, Phone, Video } from "lucide-react";
 
 import { getInfluencers } from "@/services/api";
 import { Influencer } from "@/types";
+  import { getInfluencerById } from "@/services/api";
 
 export default function ProfilePage() {
   const params = useParams();
   const router = useRouter();
   const id = Number(params.id);
 
-  const { data } = useSWR("influencers", getInfluencers);
-  const influencer: Influencer | undefined = data?.find(
-    (inf) => inf.id === id
-  );
+
+const { data: influencer } = useSWR(
+  id ? ["influencer", id] : null,
+  () => getInfluencerById(id)
+);
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
