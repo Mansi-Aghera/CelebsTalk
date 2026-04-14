@@ -238,20 +238,23 @@ import { MessageSquare, Phone, Video } from "lucide-react";
 
 import { getInfluencers } from "@/services/api";
 import { Influencer } from "@/types";
-  import { getInfluencerById } from "@/services/api";
 
 export default function ProfilePage() {
-  const params = useParams();
-  const router = useRouter();
-  const id = Number(params.id);
+const params = useParams();
+const router = useRouter();
+const id = Number(params.id);
 
+// ✅ ALL HOOKS FIRST
+const { data } = useSWR("influencers", getInfluencers);
+const [isBookingOpen, setIsBookingOpen] = useState(false);
 
-const { data: influencer } = useSWR(
-  id ? ["influencer", id] : null,
-  () => getInfluencerById(id)
-);
+// ✅ THEN CONDITIONS
+if (!data) {
+  return <div className="p-10">Loading...</div>;
+}
 
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
+const influencer = data.find((inf) => inf.id === id);
+
 
   // 🔥 HANDLERS (DYNAMIC)
   const handleChat = () => {
@@ -266,12 +269,11 @@ const { data: influencer } = useSWR(
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden">
-
       {/* ✅ MODAL */}
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
-    // 🔥 PASS DATA
+        // 🔥 PASS DATA
       />
 
       {/* FLOATING BUTTONS (UI SAME) */}
@@ -279,11 +281,7 @@ const { data: influencer } = useSWR(
         {[MessageSquare, Phone, Video].map((Icon, i) => (
           <div
             key={i}
-            onClick={
-              i === 0
-                ? handleChat
-                : handleCallClick
-            }
+            onClick={i === 0 ? handleChat : handleCallClick}
             className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#dcfce7]/70 backdrop-blur-sm border border-[#22c55e] flex items-center justify-center cursor-pointer hover:-translate-x-1 hover:bg-[#dcfce7] transition-all duration-300 shadow-sm"
           >
             <Icon
@@ -292,13 +290,11 @@ const { data: influencer } = useSWR(
               strokeWidth={2}
             />
           </div>
-          
         ))}
       </div>
 
       <Section bg="gradient" className="flex-1">
         <Container className="space-y-6 lg:space-y-8">
-
           {/* BREADCRUMB */}
           <div className="flex items-center gap-2 text-[12px] font-medium text-[#888] pt-2">
             <span
