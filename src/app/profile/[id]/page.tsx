@@ -236,24 +236,28 @@ import BookingModal from "@/components/modals/BookingModal";
 
 import { MessageSquare, Phone, Video } from "lucide-react";
 
-import { getInfluencers } from "@/services/api";
+import { getInfluencerById, getInfluencers } from "@/services/api";
 import { Influencer } from "@/types";
 
 export default function ProfilePage() {
 const params = useParams();
 const router = useRouter();
-const id = Number(params.id);
 
-// ✅ ALL HOOKS FIRST
-const { data } = useSWR("influencers", getInfluencers);
+// ⚠️ NO Number()
+const influencerId = Number(params.id);
+// ✅ SINGLE API CALL
+const { data: influencer, isLoading } = useSWR(
+  influencerId ? ["influencer", influencerId] : null,
+  () => getInfluencerById(influencerId)
+);
+
+// ✅ hooks already above
 const [isBookingOpen, setIsBookingOpen] = useState(false);
 
-// ✅ THEN CONDITIONS
-if (!data) {
+// ✅ loading
+if (isLoading) {
   return <div className="p-10">Loading...</div>;
 }
-
-const influencer = data.find((inf) => inf.id === id);
 
 
   // 🔥 HANDLERS (DYNAMIC)
