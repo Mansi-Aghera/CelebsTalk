@@ -123,7 +123,6 @@
 //   );
 // }
 
-
 "use client";
 
 import Image from "next/image";
@@ -139,9 +138,7 @@ export default function ProfileHeader({
 }: {
   influencer?: Influencer;
 }) {
-  const [followers, setFollowers] = useState(
-    influencer?.follower_count || 0
-  );
+  const [followers, setFollowers] = useState(influencer?.follower_count || 0);
 
   const [loading, setLoading] = useState(false);
 
@@ -156,7 +153,6 @@ export default function ProfileHeader({
 
       // 🔥 optimistic update
       setFollowers((prev) => prev + 1);
-
     } catch (err) {
       console.error(err);
     } finally {
@@ -219,14 +215,11 @@ export default function ProfileHeader({
       {/* ABOUT */}
       <div className="mt-6">
         <h3 className="font-bold">About Me</h3>
-        <p className="text-sm text-gray-500">
-          {influencer?.bio}
-        </p>
+        <p className="text-sm text-gray-500">{influencer?.bio}</p>
       </div>
 
       {/* BOTTOM */}
       <div className="flex items-center mt-5 gap-4">
-
         {/* FOLLOW BUTTON */}
         <button
           onClick={handleFollow}
