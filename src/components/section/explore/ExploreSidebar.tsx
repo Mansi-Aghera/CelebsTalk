@@ -325,15 +325,17 @@ interface Props {
 
 export default function ExploreSidebar({ categories, celebrities }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
+const [availableNow, setAvailableNow] = useState(false);
+  const filtered = celebrities.filter((c) => {
+  const categoryMatch =
+    selected.length === 0 ||
+    c.categories.some((cat) => selected.includes(cat.name));
 
-  const filtered =
-    selected.length === 0
-      ? celebrities
-      : celebrities.filter((c) =>
-          c.categories.some((cat) =>
-            selected.includes(cat.name)
-          )
-        );
+  const availabilityMatch =
+    !availableNow || c.isLive === true;
+
+  return categoryMatch && availabilityMatch;
+});
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full">
@@ -404,8 +406,17 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
 
         <SidebarSection title="AVAILABILITY" defaultOpen>
           {["Available Now", "Today", "This Week"].map((item) => (
-            <Checkbox key={item} label={item} />
-          ))}
+  <Checkbox
+    key={item}
+    label={item}
+    checked={item === "Available Now" ? availableNow : false}
+    onChange={
+      item === "Available Now"
+        ? (val) => setAvailableNow(val)
+        : undefined
+    }
+  />
+))}
         </SidebarSection>
       </motion.aside>
 
@@ -468,8 +479,7 @@ function Checkbox({
     <label className="flex items-center gap-2 text-sm cursor-pointer">
       <input
         type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange?.(e.target.checked)}
+checked={checked ?? false}        onChange={(e) => onChange?.(e.target.checked)}
         className="w-4 h-4 rounded border border-[var(--neutral-300)] accent-[var(--primary-300)]"
       />
       {label}
