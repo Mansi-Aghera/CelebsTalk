@@ -38,6 +38,14 @@ export function getInfluencers(): Promise<Influencer[]> {
   });
 }
 
+export function getInfluencerById(id: number): Promise<Influencer> {
+  return fetchAPI<{ data: Influencer }>(`influencers/${id}/`).then((res) => ({
+    ...res.data,
+    image: res.data.image
+      ? `${BASE_URL}${res.data.image}`
+      : null,
+  }));
+}
 // ─── Categories ───────────────────────────────────────────
 export function getCategories(): Promise<Category[]> {
   return cachedFetch("categories", async () => {

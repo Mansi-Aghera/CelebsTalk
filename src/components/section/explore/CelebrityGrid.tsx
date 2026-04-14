@@ -1,5 +1,3 @@
-
-
 // // ─── STATIC CODE (COMMENTED OUT) ──────────────────────────
 
 // // "use client";
@@ -166,7 +164,6 @@
 
 // // CelebrityGrid.Header = Header;
 
-
 // // ─── DYNAMIC CODE ──────────────────────────────────────────
 
 // "use client";
@@ -240,7 +237,7 @@
 //               chatPrice={`₹${celeb.price_per_min_chat}/min`}
 //             />
 //           </motion.div>
-        
+
 //         ))
 //         )}
 //       </motion.div>
@@ -369,14 +366,10 @@ function CelebrityGrid({ data, hideHeader }: Props) {
 
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentData = data.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+  const currentData = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <div className="flex-1">
-
       {/* HEADER */}
       {!hideHeader && <Header />}
 
@@ -451,9 +444,7 @@ function CelebrityGrid({ data, hideHeader }: Props) {
         })}
 
         <button
-          onClick={() =>
-            setCurrentPage((p) => Math.min(p + 1, totalPages))
-          }
+          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           className="px-3 py-1 text-sm text-[var(--neutral-600)]"
         >
           Next

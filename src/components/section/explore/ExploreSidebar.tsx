@@ -158,7 +158,6 @@
 
 // export default function ExploreSidebar({ categories, selected, setSelected }: Props) {
 
-  
 //   return (
 //     <motion.aside
 //       variants={slideLeft}
@@ -308,7 +307,6 @@
 //   return <div className="border-t border-[var(--neutral-200)] my-4" />;
 // }
 
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -325,19 +323,19 @@ interface Props {
 
 export default function ExploreSidebar({ categories, celebrities }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [availableNow, setAvailableNow] = useState(false);
+  const filtered = celebrities.filter((c) => {
+    const categoryMatch =
+      selected.length === 0 ||
+      c.categories.some((cat) => selected.includes(cat.name));
 
-  const filtered =
-    selected.length === 0
-      ? celebrities
-      : celebrities.filter((c) =>
-          c.categories.some((cat) =>
-            selected.includes(cat.name)
-          )
-        );
+    const availabilityMatch = !availableNow || c.isLive === true;
+
+    return categoryMatch && availabilityMatch;
+  });
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full">
-
       {/* 🔥 SIDEBAR */}
       <motion.aside
         variants={slideLeft}
@@ -362,11 +360,9 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
         <Divider />
 
         <SidebarSection title="INTERACTION TYPE" defaultOpen>
-          {["Video Call", "Audio Call", "Chat", "Video Message"].map(
-            (item) => (
-              <Checkbox key={item} label={item} />
-            )
-          )}
+          {["Video Call", "Audio Call", "Chat", "Video Message"].map((item) => (
+            <Checkbox key={item} label={item} />
+          ))}
         </SidebarSection>
 
         <Divider />
@@ -375,10 +371,7 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
           <div className="text-xs text-[var(--neutral-600)] mb-3">
             ₹ 100 - ₹ 10000
           </div>
-          <input
-            type="range"
-            className="w-full accent-[var(--primary-300)]"
-          />
+          <input type="range" className="w-full accent-[var(--primary-300)]" />
         </SidebarSection>
 
         <Divider />
@@ -404,7 +397,16 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
 
         <SidebarSection title="AVAILABILITY" defaultOpen>
           {["Available Now", "Today", "This Week"].map((item) => (
-            <Checkbox key={item} label={item} />
+            <Checkbox
+              key={item}
+              label={item}
+              checked={item === "Available Now" ? availableNow : false}
+              onChange={
+                item === "Available Now"
+                  ? (val) => setAvailableNow(val)
+                  : undefined
+              }
+            />
           ))}
         </SidebarSection>
       </motion.aside>
@@ -413,7 +415,6 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
       <div className="flex-1">
         <CelebrityGrid data={filtered} hideHeader />
       </div>
-
     </div>
   );
 }
@@ -446,9 +447,7 @@ function SidebarSection({
       </button>
 
       {open && (
-        <div className="space-y-2 text-[var(--neutral-700)]">
-          {children}
-        </div>
+        <div className="space-y-2 text-[var(--neutral-700)]">{children}</div>
       )}
     </div>
   );
@@ -468,7 +467,7 @@ function Checkbox({
     <label className="flex items-center gap-2 text-sm cursor-pointer">
       <input
         type="checkbox"
-        checked={checked}
+        checked={checked ?? false}
         onChange={(e) => onChange?.(e.target.checked)}
         className="w-4 h-4 rounded border border-[var(--neutral-300)] accent-[var(--primary-300)]"
       />
@@ -479,7 +478,5 @@ function Checkbox({
 
 /* 🔥 DIVIDER */
 function Divider() {
-  return (
-    <div className="border-t border-[var(--neutral-200)] my-4" />
-  );
+  return <div className="border-t border-[var(--neutral-200)] my-4" />;
 }
