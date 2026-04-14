@@ -320,15 +320,131 @@
 //   );
 // }
 
+// "use client";
+
+// import { useEffect, useRef } from "react";
+// import { useSearchParams, useRouter } from "next/navigation";
+// import { endCall, getAgoraToken } from "@/lib/callService";
+
+// const APP_ID = "6b021724b8c6456a8e3fcadf06a278a7";
+
+// export default function CallPage() {
+//   const params = useSearchParams();
+//   const router = useRouter();
+
+//   const channelName = params.get("channel");
+//   const type = params.get("type");
+//   const mode = params.get("mode");
+
+//   const clientRef = useRef<any>(null);
+//   const tracksRef = useRef<any[]>([]);
+//   const joinedRef = useRef(false);   // ✅ track if joined
+//   const mountedRef = useRef(false);  // ✅ prevent double run
+
+//   useEffect(() => {
+//     if (mountedRef.current) return; // ✅ skip second StrictMode call
+//     mountedRef.current = true;
+//     joinCall();
+
+//     return () => {
+//       if (joinedRef.current) leaveCall();
+//     };
+//   }, []);
+
+//   const joinCall = async () => {
+//     if (!channelName) return;
+
+//     try {
+//       const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+//       const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+//       clientRef.current = client;
+
+//       const token = await getAgoraToken(channelName, 0);
+//       console.log("Joining channel:", channelName);
+
+//       await client.join(APP_ID, channelName, token, null);
+//       joinedRef.current = true; // ✅ mark as joined
+
+//       if (type === "video") {
+//         const [mic, cam] = await AgoraRTC.createMicrophoneAndCameraTracks();
+//         tracksRef.current = [mic, cam];
+//         cam.play("local-video");
+//         await client.publish([mic, cam]);
+//       } else {
+//         const mic = await AgoraRTC.createMicrophoneAudioTrack();
+//         tracksRef.current = [mic];
+//         await client.publish([mic]);
+//       }
+
+//       client.on("user-published", async (user: any, mediaType: any) => {
+//         await client.subscribe(user, mediaType);
+//         if (mediaType === "video") user.videoTrack.play("remote-video");
+//         if (mediaType === "audio") user.audioTrack.play();
+//       });
+
+//       client.on("user-unpublished", (user: any) => {
+//         console.log("User left:", user.uid);
+//       });
+
+//     } catch (err) {
+//       console.error("Join failed:", err);
+//     }
+//   };
+
+//   const leaveCall = async () => {
+//     try {
+//       tracksRef.current.forEach((t) => t.close());
+//       tracksRef.current = [];
+//       await clientRef.current?.leave();
+//       joinedRef.current = false;
+//       if (channelName) await endCall(channelName);
+//     } catch (err) {
+//       console.error("Leave error:", err);
+//     }
+//     router.push("/");
+//   };
+
+//   return (
+//     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+//       <p className="mb-4 text-sm text-gray-400">
+//         {mode === "caller" ? "Calling..." : "Connected"} · {type} call
+//       </p>
+
+//       {type === "video" && (
+//         <div className="flex gap-4 mb-8">
+//           <div id="local-video"  className="w-48 h-36 bg-black rounded-lg" />
+//           <div id="remote-video" className="w-48 h-36 bg-black rounded-lg" />
+//         </div>
+//       )}
+
+//       {type === "audio" && (
+//         <div className="flex flex-col items-center gap-4 mb-8">
+//           <div className="w-24 h-24 rounded-full bg-green-700 flex items-center justify-center text-4xl">
+//             🎙️
+//           </div>
+//           <p className="text-gray-300">Audio call in progress...</p>
+//         </div>
+//       )}
+
+//       <button
+//         onClick={leaveCall}
+//         className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg transition-colors"
+//       >
+//         End Call
+//       </button>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { endCall, getAgoraToken } from "@/lib/callService";
 
 const APP_ID = "6b021724b8c6456a8e3fcadf06a278a7";
 
-export default function CallPage() {
+function CallContent() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -338,11 +454,11 @@ export default function CallPage() {
 
   const clientRef = useRef<any>(null);
   const tracksRef = useRef<any[]>([]);
-  const joinedRef = useRef(false);   // ✅ track if joined
-  const mountedRef = useRef(false);  // ✅ prevent double run
+  const joinedRef = useRef(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    if (mountedRef.current) return; // ✅ skip second StrictMode call
+    if (mountedRef.current) return;
     mountedRef.current = true;
     joinCall();
 
@@ -363,7 +479,7 @@ export default function CallPage() {
       console.log("Joining channel:", channelName);
 
       await client.join(APP_ID, channelName, token, null);
-      joinedRef.current = true; // ✅ mark as joined
+      joinedRef.current = true;
 
       if (type === "video") {
         const [mic, cam] = await AgoraRTC.createMicrophoneAndCameraTracks();
@@ -433,5 +549,17 @@ export default function CallPage() {
         End Call
       </button>
     </div>
+  );
+}
+
+export default function CallPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        Connecting...
+      </div>
+    }>
+      <CallContent />
+    </Suspense>
   );
 }
