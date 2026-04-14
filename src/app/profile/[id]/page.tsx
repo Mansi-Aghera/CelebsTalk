@@ -244,8 +244,7 @@ const params = useParams();
 const router = useRouter();
 
 // ⚠️ NO Number()
-const influencerId = params.id as string;
-
+const influencerId = Number(params.id);
 // ✅ SINGLE API CALL
 const { data: influencer, isLoading } = useSWR(
   influencerId ? ["influencer", influencerId] : null,
