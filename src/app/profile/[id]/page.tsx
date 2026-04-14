@@ -327,11 +327,11 @@ if (isLoading) {
           {/* SECTIONS */}
           <ProfileHeader influencer={influencer} />
           <StatsSection influencer={influencer} />
-          <ExpertiseSection />
+          <ExpertiseSection influencer={influencer}/>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            <ServicesSection />
-            <HighlightsSection />
+            <ServicesSection influencer={influencer} />
+            <HighlightsSection influencerId={String(influencerId)}/>
           </div>
 
           <ReviewsSection />

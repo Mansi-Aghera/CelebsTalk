@@ -2,7 +2,7 @@
 
 import { Influencer, InfluencersResponse, Category, CategoriesResponse, FAQ } from "@/types";
 
-const BASE_URL = "https://celebstalks.pythonanywhere.com";
+export const BASE_URL = "https://celebstalks.pythonanywhere.com";
 
 // ─── Generic Fetch ────────────────────────────────────────
 export const fetchAPI = async <T = unknown>(endpoint: string): Promise<T> => {
@@ -43,14 +43,37 @@ export function getInfluencers(): Promise<Influencer[]> {
 }
 
 export function getInfluencerById(id: number): Promise<Influencer> {
-  return fetchAPI<{ data: Influencer }>(`influencers/${id}/`).then((res) => ({
-    ...res.data,
-    image: res.data.image
-      ? res.data.image.startsWith("http")
-        ? res.data.image
-        : `${BASE_URL}${res.data.image}`
-      : null,
-  }));
+  return fetchAPI<{ data: Influencer }>(`influencers/${id}/`)
+    .then((res) => ({
+      ...res.data,
+
+      image: res.data.image
+        ? res.data.image.startsWith("http")
+          ? res.data.image
+          : `${BASE_URL}${res.data.image}`
+        : "",
+
+      services_data: res.data.services_data?.map((s) => ({
+        ...s,
+        service_data: {
+          ...s.service_data,
+          image: s.service_data?.image
+            ? s.service_data.image.startsWith("http")
+              ? s.service_data.image
+              : `${BASE_URL}${s.service_data.image}`
+            : "",
+        },
+      })),
+
+      expertise_data: res.data.expertise_data?.map((e) => ({
+  ...e,
+  image: e.image
+    ? e.image.startsWith("http")
+      ? e.image
+      : `${BASE_URL}${e.image}`
+    : null,
+})),
+    }));
 }
 // ─── Categories ───────────────────────────────────────────
 export function getCategories(): Promise<Category[]> {
@@ -79,4 +102,23 @@ export function getFAQs(): Promise<FAQ[]> {
 // FOLLOW / UNFOLLOW
 export async function followInfluencer(influencer_id: number) {
   return fetchAPI(`follow/${influencer_id}/`);
+}
+
+
+// highlight 
+
+export async function getInfluencerGallery(influencer_id: string) {
+  return fetchAPI<{ galleries: any[] }>(
+    `influencer_gallery/influencer_id/${influencer_id}/`
+  ).then((res) =>
+    res.galleries.map((item) => ({
+      id: item.id,
+      title: item.name || "Highlight",
+      image: item.image
+        ? item.image.startsWith("http")
+          ? item.image
+          : `${BASE_URL}${item.image}`
+        : "",
+    }))
+  );
 }
