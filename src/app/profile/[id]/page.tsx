@@ -290,6 +290,7 @@ export default function ProfilePage() {
               strokeWidth={2}
             />
           </div>
+          
         ))}
       </div>
 

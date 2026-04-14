@@ -154,7 +154,7 @@ import Button from "@/components/ui/Button";
 import CelebrityCard from "@/components/ui/CelebrityCard";
 import { fadeUp, staggerContainer } from "@/lib/animations";
 import { Influencer } from "@/types";
-
+import { useRouter } from "next/navigation";
 interface TrendingCelebritiesProps {
   celebrities: Influencer[];
 }
@@ -162,6 +162,7 @@ interface TrendingCelebritiesProps {
 export default function TrendingCelebrities({
   celebrities,
 }: TrendingCelebritiesProps) {
+  const router = useRouter();
   return (
     <Section>
       {" "}
@@ -194,7 +195,12 @@ export default function TrendingCelebrities({
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {celebrities.map((celeb) => (
-            <motion.div key={celeb.id} variants={fadeUp}>
+            <motion.div
+  key={celeb.id}
+  variants={fadeUp}
+  onClick={() => router.push(`/profile/${celeb.id}`)}
+  className="cursor-pointer"
+>
               <CelebrityCard
                 name={celeb.full_name}
                 image={celeb.image || "/images/hero/img1.jpg"}
