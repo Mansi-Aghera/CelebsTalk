@@ -9,11 +9,10 @@ export default function StatsSection({
 }: {
   influencer?: Influencer;
 }) {
-  const stats = [
+
+const stats = [
   {
-    value: influencer?.completed_session_count
-      ? `${influencer.completed_session_count}`
-      : "0",
+    value: `${influencer?.completed_session_count ?? 0}`,
     label: "Minute Talked",
   },
   {
@@ -23,12 +22,12 @@ export default function StatsSection({
     label: "Avg Rating",
   },
   {
-    value: influencer?.total_reviews ?? "",
+    value: `${influencer?.total_reviews ?? 0}`,
     label: "Total Reviews",
   },
   {
-    value: influencer?.total_request_count ?? "",
-    label: "Total Reviews",
+    value: `${influencer?.total_request_count ?? 0}`,
+    label: "Total Requests",
   },
 ];
 
