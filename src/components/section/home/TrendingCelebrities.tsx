@@ -198,7 +198,7 @@ export default function TrendingCelebrities({
             <motion.div
   key={celeb.id}
   variants={fadeUp}
-  onClick={() => router.push(`/profile/${celeb.id}`)}
+  onClick={() => router.push(`/profile/${celeb.influencer_id}`)}
   className="cursor-pointer"
 >
               <CelebrityCard

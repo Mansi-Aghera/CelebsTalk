@@ -33,7 +33,11 @@ export function getInfluencers(): Promise<Influencer[]> {
     // Prepend BASE_URL to image paths so no other file needs it
     return res.data.map((inf) => ({
       ...inf,
-      image: inf.image ? `${BASE_URL}${inf.image}` : null,
+      image: inf.image
+  ? inf.image.startsWith("http")
+    ? inf.image
+    : `${BASE_URL}${inf.image}`
+  : null,
     }));
   });
 }
@@ -42,7 +46,9 @@ export function getInfluencerById(id: number): Promise<Influencer> {
   return fetchAPI<{ data: Influencer }>(`influencers/${id}/`).then((res) => ({
     ...res.data,
     image: res.data.image
-      ? `${BASE_URL}${res.data.image}`
+      ? res.data.image.startsWith("http")
+        ? res.data.image
+        : `${BASE_URL}${res.data.image}`
       : null,
   }));
 }
@@ -68,4 +74,9 @@ export function getFAQs(): Promise<FAQ[]> {
 
     return res.data;
   });
+}
+
+// FOLLOW / UNFOLLOW
+export async function followInfluencer(influencer_id: number) {
+  return fetchAPI(`follow/${influencer_id}/`);
 }

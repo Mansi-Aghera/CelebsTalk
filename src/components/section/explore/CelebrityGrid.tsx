@@ -391,7 +391,7 @@ function CelebrityGrid({ data, hideHeader }: Props) {
               variants={fadeUp}
               whileHover={hoverLift}
               whileTap={{ scale: 0.97 }}
-              onClick={() => router.push(`/profile/${celeb.id}`)}
+              onClick={() => router.push(`/profile/${celeb.influencer_id}`)}
               className="cursor-pointer"
             >
               <CelebrityCard
