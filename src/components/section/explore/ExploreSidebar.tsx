@@ -393,7 +393,7 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
           ))}
         </SidebarSection>
 
-        <Divider />
+        {/* <Divider />
 
         <SidebarSection title="AVAILABILITY" defaultOpen>
           {["Available Now", "Today", "This Week"].map((item) => (
@@ -408,7 +408,7 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
               }
             />
           ))}
-        </SidebarSection>
+        </SidebarSection> */}
       </motion.aside>
 
       {/* 🔥 GRID */}

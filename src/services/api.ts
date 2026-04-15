@@ -137,3 +137,20 @@ export async function getInfluencerGallery(influencer_id: string) {
     }))
   );
 }
+
+// -followers 
+
+export async function getFollowers(influencer_id: string) {
+  return fetchAPI<{ data: any[] }>(
+    `follow/influencer_id/${influencer_id}/`
+  ).then((res) =>
+    res.data.map((f) => ({
+      id: f.id,
+      image: f.user_data?.image
+        ? f.user_data.image.startsWith("http")
+          ? f.user_data.image
+          : `${BASE_URL}${f.user_data.image}`
+        : null,
+    }))
+  );
+}
