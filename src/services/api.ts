@@ -75,6 +75,21 @@ export function getInfluencerById(id: number): Promise<Influencer> {
 })),
     }));
 }
+
+
+export async function getInfluencerReviews(influencer_id: string) {
+  return fetchAPI<{ data: any[] }>(
+    `influencer_review/?influencer_id=${influencer_id}`
+  ).then((res) =>
+    res.data.map((r) => ({
+      id: r.id,
+      name: r.user_data?.full_name || "User",
+      rating: r.rating || 0,
+      text: r.review || "",
+      date: r.created_at,
+    }))
+  );
+}
 // ─── Categories ───────────────────────────────────────────
 export function getCategories(): Promise<Category[]> {
   return cachedFetch("categories", async () => {
