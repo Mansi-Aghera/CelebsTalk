@@ -128,10 +128,13 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { fadeUp } from "@/lib/animations";
-import { Share, Clock } from "lucide-react";
+import { Share, Clock, Video, Phone, MessageSquare } from "lucide-react";
 import { Influencer } from "@/types";
 import { useState } from "react";
 import { followInfluencer } from "@/services/api";
+import useSWR from "swr";
+import { getFollowers } from "@/services/api";
+
 
 export default function ProfileHeader({
   influencer,
@@ -159,6 +162,14 @@ export default function ProfileHeader({
       setLoading(false);
     }
   };
+const { data: followersList } = useSWR(
+  influencer?.influencer_id
+    ? ["followers", influencer.influencer_id]
+    : null,
+  () => getFollowers(influencer!.influencer_id)
+);
+
+const avatars = followersList?.slice(0, 4) || [];
 
   return (
     <motion.div
@@ -219,22 +230,81 @@ export default function ProfileHeader({
       </div>
 
       {/* BOTTOM */}
-      <div className="flex items-center mt-5 gap-4">
-        {/* FOLLOW BUTTON */}
-        <button
-          onClick={handleFollow}
-          disabled={loading}
-          className="px-6 py-2 text-white rounded-full font-bold"
-          style={{ background: "#c026d3" }}
-        >
-          {loading ? "Following..." : "Follow"}
-        </button>
+      {/* BOTTOM */}
+<div className="flex flex-col gap-3 mt-5">
 
-        {/* FOLLOWERS */}
-        <span className="text-sm text-gray-500">
-          +{followers} people following
-        </span>
+  {/* FOLLOW ROW */}
+  <div className="flex items-center gap-4">
+
+  {/* BUTTON */}
+  <button
+    onClick={handleFollow}
+    disabled={loading}
+    className="px-6 py-2 text-white rounded-full font-bold"
+    style={{ background: "#c026d3" }}
+  >
+    {loading ? "Following..." : "Follow"}
+  </button>
+
+  {/* 🔥 AVATARS (ONLY IF EXISTS) */}
+  {avatars.length > 0 && (
+    <div className="flex items-center -space-x-[8px] ml-3">
+      {avatars.map((item) => (
+        <div
+          key={item.id}
+          className="relative w-[28px] h-[28px] rounded-full overflow-hidden border-[2px] border-white shadow-sm"
+        >
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt="follower"
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200" />
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* TEXT */}
+  <span className="text-sm text-gray-500">
+    +{followers} people following
+  </span>
+
+</div>
+
+  {/* 🔥 PRICING ROW (DYNAMIC) */}
+  <div className="flex items-center gap-6">
+
+    {/* VIDEO */}
+    <div className="flex items-center gap-2 text-sm">
+      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
+        <Video size={16} />
       </div>
+      ₹{influencer?.price_per_min_video || 0}/min
+    </div>
+
+    {/* CALL */}
+    <div className="flex items-center gap-2 text-sm">
+      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
+        <Phone size={16} />
+      </div>
+      ₹{influencer?.price_per_min_audio || 0}/min
+    </div>
+
+    {/* CHAT */}
+    <div className="flex items-center gap-2 text-sm">
+      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
+        <MessageSquare size={16} />
+      </div>
+      ₹{influencer?.price_per_min_chat || 0}/min
+    </div>
+
+  </div>
+</div>
     </motion.div>
   );
 }
