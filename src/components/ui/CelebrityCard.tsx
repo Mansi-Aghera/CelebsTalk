@@ -100,9 +100,20 @@ export default function CelebrityCard({
               {rating.toFixed(1)}
             </div>
 
-            <div className="bg-[var(--neutral-1000)] text-[var(--yellow-100)] text-[11px] px-2 py-[2px] rounded-r-sm tracking-[2px]">
-              ★★★★★
-            </div>
+            <div className="flex items-center bg-[var(--neutral-1000)] px-2 py-[2px] rounded-r-sm gap-[1px]">
+  {[1, 2, 3, 4, 5].map((star) => (
+    <span
+      key={star}
+      className={`text-[11px] ${
+        star <= Math.round(rating)
+          ? "text-[var(--yellow-100)]"
+          : "text-gray-400"
+      }`}
+    >
+      ★
+    </span>
+  ))}
+</div>
           </div>
         </div>
       </div>

@@ -334,7 +334,11 @@ if (isLoading) {
             <HighlightsSection influencerId={String(influencerId)}/>
           </div>
 
-          <ReviewsSection />
+          <ReviewsSection
+  influencerId={influencer?.influencer_id || ""}
+  avgRating={influencer?.avg_rating || 0}
+  totalReviews={influencer?.total_reviews || 0}
+/>
         </Container>
       </Section>
     </div>
