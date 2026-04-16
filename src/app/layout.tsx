@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import AppShell from "@/components/layout/AppShell";
+
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -25,12 +25,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${plusJakarta.variable} ${poppins.variable} font-sans antialiased`}
-      >
-        <Navbar />
-        <main className="min-h-screen pt-[72px]">{children}</main>
-        <Footer />
+  <body className={`${plusJakarta.variable} ${poppins.variable} font-sans antialiased`}>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

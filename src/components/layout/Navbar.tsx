@@ -381,7 +381,7 @@ export default function Navbar() {
               Call
             </Button>
 
-            <Button variant="soft">
+            <Button variant="soft" href="/login">
               Login
             </Button>
           </div>

@@ -173,6 +173,7 @@ export default async function ExplorePage() {
             celebrities={celebrities}
           />
         </div>
+        
 
       </Container>
     </Section>
