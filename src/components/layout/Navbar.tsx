@@ -307,7 +307,7 @@ const navLinks = [
   { label: "Explore", href: "/explore" },
   { label: "Categories", href: "/categories" },
   { label: "How it works", href: "/how-it-works" },
-  { label: "Blog", href: "#" },
+  { label: "Blog", href: "/my-services" },
   { label: "For Celebrity", href: "#" },
 ];
 
