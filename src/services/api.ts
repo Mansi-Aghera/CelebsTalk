@@ -244,3 +244,36 @@ export async function getUserTransactions(user_id: string) {
     };
   });
 }
+
+//----- services
+
+export async function getUserBookings(user_id: string) {
+  return fetchAPI<{ data: any[] }>(
+    `service_booking/user_id/${user_id}/`
+  ).then((res) =>
+    res.data.map((item) => ({
+      id: item.id,
+
+      // ✅ COL 1
+      serviceName: item.services_data?.[0]?.name || "-",
+
+      // ✅ COL 2
+      influencerName: item.influencer_data?.full_name || "-",
+
+      // ✅ COL 3
+      status: item.booking_status || "-",
+
+      // ✅ COL 4
+      totalPaid: `₹${item.total_paid || 0}`,
+
+      // ✅ COL 5
+      createdAt: new Date(item.created_at).toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }))
+  );
+}
