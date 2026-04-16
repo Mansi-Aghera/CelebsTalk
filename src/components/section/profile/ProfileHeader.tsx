@@ -277,33 +277,39 @@ const avatars = followersList?.slice(0, 4) || [];
 </div>
 
   {/* 🔥 PRICING ROW (DYNAMIC) */}
-  <div className="flex items-center gap-6">
+<div className="flex items-center gap-3 mt-3 flex-wrap">
 
-    {/* VIDEO */}
-    <div className="flex items-center gap-2 text-sm">
-      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
-        <Video size={16} />
-      </div>
+  {/* VIDEO */}
+  <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#fff0f7] border border-[#ffd6e8] shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all">
+    <div className="w-8 h-8 rounded-full bg-[var(--primary-100)]/10 flex items-center justify-center text-[var(--primary-300)]">
+      <Video size={16} />
+    </div>
+    <span className="text-[13px] font-semibold text-[var(--primary-300)]">
       ₹{influencer?.price_per_min_video || 0}/min
-    </div>
-
-    {/* CALL */}
-    <div className="flex items-center gap-2 text-sm">
-      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
-        <Phone size={16} />
-      </div>
-      ₹{influencer?.price_per_min_audio || 0}/min
-    </div>
-
-    {/* CHAT */}
-    <div className="flex items-center gap-2 text-sm">
-      <div className="w-8 h-8 rounded-full border-2 border-green-400 flex items-center justify-center text-green-500">
-        <MessageSquare size={16} />
-      </div>
-      ₹{influencer?.price_per_min_chat || 0}/min
-    </div>
-
+    </span>
   </div>
+
+  {/* CALL */}
+  <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#f6ebff] border border-[#ead6ff] shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all">
+    <div className="w-8 h-8 rounded-full bg-[var(--secondary-100)]/10 flex items-center justify-center text-[var(--secondary-300)]">
+      <Phone size={16} />
+    </div>
+    <span className="text-[13px] font-semibold text-[var(--secondary-300)]">
+      ₹{influencer?.price_per_min_audio || 0}/min
+    </span>
+  </div>
+
+  {/* CHAT */}
+  <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#fff0f7] border border-[#ffd6e8] shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all">
+    <div className="w-8 h-8 rounded-full bg-[var(--primary-100)]/10 flex items-center justify-center text-[var(--primary-300)]">
+      <MessageSquare size={16} />
+    </div>
+    <span className="text-[13px] font-semibold text-[var(--primary-300)]">
+      ₹{influencer?.price_per_min_chat || 0}/min
+    </span>
+  </div>
+
+</div>
 </div>
     </motion.div>
   );

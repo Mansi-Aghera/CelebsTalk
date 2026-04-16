@@ -315,6 +315,8 @@ import { ChevronDown, Star } from "lucide-react";
 import { useState } from "react";
 import { Category, Influencer } from "@/types";
 import CelebrityGrid from "@/components/section/explore/CelebrityGrid";
+import useSWR from "swr";
+import { getInfluencersByRating } from "@/services/api";
 
 interface Props {
   categories: Category[];
@@ -323,17 +325,29 @@ interface Props {
 
 export default function ExploreSidebar({ categories, celebrities }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [availableNow, setAvailableNow] = useState(false);
-  const filtered = celebrities.filter((c) => {
-    const categoryMatch =
-      selected.length === 0 ||
-      c.categories.some((cat) => selected.includes(cat.name));
+// ✅ FIRST SWR
+const { data: ratingData } = useSWR(
+  selectedRating ? ["rating", selectedRating] : null,
+  () => getInfluencersByRating(selectedRating!)
+);
 
-    const availabilityMatch = !availableNow || c.isLive === true;
+// ✅ THEN USE
+const baseData: Influencer[] = selectedRating
+  ? ratingData ?? []
+  : celebrities;
 
-    return categoryMatch && availabilityMatch;
-  });
+// ✅ THEN FILTER
+const filtered = baseData.filter((c) => {
+  const categoryMatch =
+    selected.length === 0 ||
+    c.categories.some((cat) => selected.includes(cat.name));
 
+  const availabilityMatch = !availableNow || c.isLive === true;
+
+  return categoryMatch && availabilityMatch;
+});
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full">
       {/* 🔥 SIDEBAR */}
@@ -359,13 +373,13 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
 
         <Divider />
 
-        <SidebarSection title="INTERACTION TYPE" defaultOpen>
+        {/* <SidebarSection title="INTERACTION TYPE" defaultOpen>
           {["Video Call", "Audio Call", "Chat", "Video Message"].map((item) => (
             <Checkbox key={item} label={item} />
           ))}
-        </SidebarSection>
+        </SidebarSection> */}
 
-        <Divider />
+        {/* <Divider /> */}
 
         <SidebarSection title="PRICE RANGE" defaultOpen>
           <div className="text-xs text-[var(--neutral-600)] mb-3">
@@ -376,22 +390,34 @@ export default function ExploreSidebar({ categories, celebrities }: Props) {
 
         <Divider />
 
-        <SidebarSection title="RATING" defaultOpen>
-          {[5, 4, 3, 2, 1].map((r, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm mb-1">
-              <div className="flex text-[var(--yellow-100)]">
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <Star
-                    key={idx}
-                    size={14}
-                    fill={idx < r ? "currentColor" : "none"}
-                    className={idx < r ? "" : "text-[var(--neutral-300)]"}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </SidebarSection>
+      <SidebarSection title="RATING" defaultOpen>
+  {[5, 4, 3, 2, 1].map((r) => (
+    <div key={r} className="flex items-center gap-2 text-sm cursor-pointer">
+
+      <input
+        type="checkbox"
+        checked={selectedRating === r}
+        onChange={(e) => {
+          if (e.target.checked) setSelectedRating(r);
+          else setSelectedRating(null);
+        }}
+        className="w-4 h-4 rounded border border-[var(--neutral-300)] accent-[var(--primary-300)]"
+      />
+
+      <div className="flex text-[var(--yellow-100)]">
+        {Array.from({ length: 5 }).map((_, idx) => (
+          <Star
+            key={idx}
+            size={14}
+            fill={idx < r ? "currentColor" : "none"}
+            className={idx < r ? "" : "text-[var(--neutral-300)]"}
+          />
+        ))}
+      </div>
+
+    </div>
+  ))}
+</SidebarSection>
 
         {/* <Divider />
 
