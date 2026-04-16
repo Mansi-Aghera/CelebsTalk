@@ -277,3 +277,31 @@ export async function getUserBookings(user_id: string) {
     }))
   );
 }
+
+export async function checkUserExists(email: string) {
+  const response = await fetch(
+    `https://celebstalks.pythonanywhere.com/user/?user_id=${email}`
+  );
+
+  return response.json();
+}
+
+export async function registerUser(payload: {
+  user_id: string;
+  full_name: string;
+  email: string;
+  mobile?: string; 
+}) {
+  const response = await fetch(
+    "https://celebstalks.pythonanywhere.com/user/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  return response.json();
+}
