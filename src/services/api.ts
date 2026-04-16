@@ -209,14 +209,11 @@ export function getInfluencersByRating(rating: number) {
 
 // ------ payment history
 
-
 export async function getUserTransactions(user_id: string) {
   return fetchAPI<{ data: any[] }>(
-    `user_transaction_history/user_id/${user_id}/`
+    `user_transaction_history/user_id/${user_id}/`,
   ).then((res) => {
-    
-    const walletAmount =
-      res.data?.[0]?.user_data?.wallet_amount ?? 0;
+    const walletAmount = res.data?.[0]?.user_data?.wallet_amount ?? 0;
 
     return {
       walletAmount, // 🔥 ADD THIS
@@ -229,12 +226,12 @@ export async function getUserTransactions(user_id: string) {
         category: tx.transaction_type || "-",
 
         date: new Date(tx.transaction_date_time).toLocaleString("en-IN", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-}),
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
 
         amount: `${
           tx.transaction_type === "Credited" ? "+" : "-"
