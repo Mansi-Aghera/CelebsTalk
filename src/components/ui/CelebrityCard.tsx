@@ -34,6 +34,7 @@ interface CelebrityCardProps {
   videoPrice: string;
   callPrice: string;
   chatPrice: string;
+  isApproved?: boolean;
 }
 
 export default function CelebrityCard({
@@ -48,6 +49,8 @@ export default function CelebrityCard({
   videoPrice,
   callPrice,
   chatPrice,
+    isApproved,
+
 }: CelebrityCardProps) {
   return (
     <motion.div
@@ -66,9 +69,12 @@ export default function CelebrityCard({
         <div className="text-sm py-3 sm:py-4 pr-2 flex-1">
           {/* NAME */}
           <div className="flex items-center gap-2 font-semibold text-sm sm:text-[16px]">
-            {name}
-            <BadgeCheck size={18} className="text-[#3b82f6] fill-white" />
-          </div>
+  {name}
+
+  {isApproved && (
+    <BadgeCheck size={18} className="text-[#3b82f6] fill-white" />
+  )}
+</div>
 
           {/* YOUTUBE */}
           <div className="flex items-center gap-1 text-[11px] sm:text-xs text-[var(--neutral-600)] mt-[2px] leading-[16px]">

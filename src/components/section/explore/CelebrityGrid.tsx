@@ -337,6 +337,7 @@
 
 // export default CelebrityGrid;
 
+
 "use client";
 
 import { useState } from "react";
@@ -410,6 +411,7 @@ function CelebrityGrid({ data, hideHeader }: Props) {
                 videoPrice={`₹${celeb.price_per_min_video}/min`}
                 callPrice={`₹${celeb.price_per_min_audio}/min`}
                 chatPrice={`₹${celeb.price_per_min_chat}/min`}
+                isApproved={celeb.status === "approved"}
               />
             </motion.div>
           ))

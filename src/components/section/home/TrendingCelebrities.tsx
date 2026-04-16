@@ -217,6 +217,7 @@ export default function TrendingCelebrities({
                 videoPrice={`₹${celeb.price_per_min_video}/min`}
                 callPrice={`₹${celeb.price_per_min_audio}/min`}
                 chatPrice={`₹${celeb.price_per_min_chat}/min`}
+                isApproved={celeb.status === "approved"}
               />
             </motion.div>
           ))}
