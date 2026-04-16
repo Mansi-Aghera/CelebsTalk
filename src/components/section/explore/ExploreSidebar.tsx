@@ -381,14 +381,14 @@ const filtered = baseData.filter((c) => {
 
         {/* <Divider /> */}
 
-        <SidebarSection title="PRICE RANGE" defaultOpen>
+        {/* <SidebarSection title="PRICE RANGE" defaultOpen>
           <div className="text-xs text-[var(--neutral-600)] mb-3">
             ₹ 100 - ₹ 10000
           </div>
           <input type="range" className="w-full accent-[var(--primary-300)]" />
         </SidebarSection>
 
-        <Divider />
+        <Divider /> */}
 
       <SidebarSection title="RATING" defaultOpen>
   {[5, 4, 3, 2, 1].map((r) => (

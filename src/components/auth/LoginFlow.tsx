@@ -249,11 +249,11 @@ export default function LoginFlow() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#f7f1f6] px-4 py-6 sm:px-6 sm:py-10">
       {/* <motion.div
-        className="pointer-events-none absolute left-110 top-30 hidden h-20 w-20 rounded-full border border-[#dbcae7] sm:block"
+        className="pointer-events-none absolute left-100 top-100 hidden h-20 w-20 rounded-full border border-[#dbcae7] sm:block"
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       /> */}
-      <Sparkles className="pointer-events-none absolute left-120 top-160 h-5 w-5 text-[#f00798]" />
+      <Sparkles className="pointer-events-none absolute left-120 top-100 h-5 w-5 text-[#f00798]" />
       <Sparkles className="pointer-events-none absolute right-120 top-30 h-5 w-5 text-[#f00798]" />
 
       <motion.section
@@ -322,7 +322,7 @@ export default function LoginFlow() {
                 <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleLoginSubmit} className="mt-4 space-y-3">
                   {method === "email" ? (
                     <>
-                      <input
+                      {/* <input
                         type="email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
@@ -350,37 +350,52 @@ export default function LoginFlow() {
                           {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                       </div>
+
+                      <button
+                        type="submit"
+                        disabled={!canSubmitLogin || isSubmitting}
+                        className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isSubmitting ? "Please wait..." : "Login"}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          clearMessages();
+                          setStep("forgot");
+                        }}
+                        className="w-full text-right text-xs font-medium text-[#8b22e7] hover:underline"
+                      >
+                        Forgot Password?
+                      </button> */}
+                      
+                      <button
+                        type="button"
+                        className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc]"
+                      >
+                        <FcGoogle size={18} />
+                        Continue with Google
+                      </button>
                     </>
                   ) : (
-                    <input
-                      type="tel"
-                      value={mobile}
-                      onChange={(event) => setMobile(event.target.value)}
-                      placeholder="Enter Mobile Number"
-                      required
-                      className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
-                    />
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={!canSubmitLogin || isSubmitting}
-                    className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isSubmitting ? "Please wait..." : method === "email" ? "Login" : "Send OTP"}
-                  </button>
-
-                  {method === "email" && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        clearMessages();
-                        setStep("forgot");
-                      }}
-                      className="w-full text-right text-xs font-medium text-[#8b22e7] hover:underline"
-                    >
-                      Forgot Password?
-                    </button>
+                    <>
+                      <input
+                        type="tel"
+                        value={mobile}
+                        onChange={(event) => setMobile(event.target.value)}
+                        placeholder="Enter Mobile Number"
+                        required
+                        className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!canSubmitLogin || isSubmitting}
+                        className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isSubmitting ? "Please wait..." : "Send OTP"}
+                      </button>
+                    </>
                   )}
                 </motion.form>
               )}
@@ -388,33 +403,36 @@ export default function LoginFlow() {
               {step === "forgot" && (
                 <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleForgotSubmit} className="mt-4 space-y-3">
                   {method === "email" ? (
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      placeholder="Enter Email Address"
-                      autoComplete="email"
-                      required
-                      className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
-                    />
+                    <>
+                      {/* <input
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        placeholder="Enter Email Address"
+                        autoComplete="email"
+                        required
+                        className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
+                      /> */}
+                    </>
                   ) : (
-                    <input
-                      type="tel"
-                      value={mobile}
-                      onChange={(event) => setMobile(event.target.value)}
-                      placeholder="Enter Mobile Number"
-                      required
-                      className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
-                    />
+                    <>
+                      <input
+                        type="tel"
+                        value={mobile}
+                        onChange={(event) => setMobile(event.target.value)}
+                        placeholder="Enter Mobile Number"
+                        required
+                        className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!canSubmitForgot || isSubmitting}
+                        className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Send OTP
+                      </button>
+                    </>
                   )}
-
-                  <button
-                    type="submit"
-                    disabled={!canSubmitForgot || isSubmitting}
-                    className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    Send OTP
-                  </button>
                 </motion.form>
               )}
 
@@ -495,23 +513,7 @@ export default function LoginFlow() {
                 </motion.form>
               )}
 
-              {(step === "login" || step === "forgot") && method === "mobile" && (
-                <>
-                  <div className="my-3 flex items-center gap-2 text-xs text-[#857f8d]">
-                    <span className="h-px flex-1 bg-[#e9e4ee]" />
-                    OR
-                    <span className="h-px flex-1 bg-[#e9e4ee]" />
-                  </div>
-
-                  <button
-                    type="button"
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc]"
-                  >
-                    <FcGoogle size={18} />
-                    continue with google
-                  </button>
-                </>
-              )}
+              {/* Google button moved to Email tab */}
 
               {errorMessage && (
                 <p className="mt-3 rounded-lg border border-[#ffd2dd] bg-[#fff3f7] px-3 py-2 text-xs text-[#c80b47]">
