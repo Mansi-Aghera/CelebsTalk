@@ -278,9 +278,19 @@ export async function getUserBookings(user_id: string) {
   );
 }
 
+// export async function checkUserExists(email: string) {
+//   const response = await fetch(
+//     `https://celebstalks.pythonanywhere.com/user/${email}`
+//   );
+
+//   return response.json();
+// }
+
 export async function checkUserExists(email: string) {
+  const encodedEmail = encodeURIComponent(email);
+
   const response = await fetch(
-    `https://celebstalks.pythonanywhere.com/user/?user_id=${email}`
+    `https://celebstalks.pythonanywhere.com/user/${encodedEmail}/`
   );
 
   return response.json();
