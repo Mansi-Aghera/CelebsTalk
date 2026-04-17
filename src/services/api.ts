@@ -345,3 +345,33 @@ export async function createInfluencerSlot(payload: {
   }
   return data;
 }
+
+export const createSlotBooking = async (payload: {
+  influencer_data: string;
+  user_data: string;
+  slot_data: number;
+  booking_type: string;
+  booking_status: string;
+  // service_data: number[];
+  service_charge: number;
+  booked_date: string;
+}) => {
+  const res = await fetch(
+    "https://celebstalks.pythonanywhere.com/slot_booking/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || "Booking failed");
+  }
+
+  return data;
+};

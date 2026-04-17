@@ -1,377 +1,536 @@
 "use client";
 
-import { X, Info, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { createInfluencerSlot } from "@/services/api";
+import { useEffect, useState } from "react";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquare,
+  Phone,
+  Video,
+  CheckCircle2,
+  CalendarDays,
+  Clock,
+} from "lucide-react";
 
-interface BookingModalProps {
+import { createSlotBooking } from "@/services/api";
+
+type BookingType = "chat" | "audio_call" | "video_call";
+
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   influencer?: any;
+  userBookings?: any[];
+  influencerSlots?: any[];
+  loadingSlots?: boolean;
+  bookingType?: BookingType;
 }
 
-export default function BookingModal({ isOpen, onClose, influencer }: BookingModalProps) {
+const BOOKING_META: Record<
+  BookingType,
+  { label: string; Icon: typeof MessageSquare; color: string; bg: string }
+> = {
+  chat: {
+    label: "Chat",
+    Icon: MessageSquare,
+    color: "text-blue-600",
+    bg: "bg-blue-50 border-blue-200",
+  },
+  audio_call: {
+    label: "Audio Call",
+    Icon: Phone,
+    color: "text-amber-600",
+    bg: "bg-amber-50 border-amber-200",
+  },
+  video_call: {
+    label: "Video Call",
+    Icon: Video,
+    color: "text-pink-600",
+    bg: "bg-pink-50 border-pink-200",
+  },
+};
+
+const DAYS_SHORT = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+function formatDateKey(date: Date): string {
+  return `${String(date.getDate()).padStart(2, "0")}-${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}-${date.getFullYear()}`;
+}
+
+export default function BookingModal({
+  isOpen,
+  onClose,
+  influencer,
+  userBookings = [],
+  influencerSlots = [],
+  loadingSlots = false,
+  bookingType = "video_call",
+}: Props) {
   const [step, setStep] = useState(1);
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("celebstalk_user");
-      if (stored) {
-        try {
-          setCurrentUser(JSON.parse(stored));
-        } catch (e) {
-          console.error("Invalid user data");
-        }
-      }
-    }
-  }, []);
-
-  // Reset to step 1 when the modal opens
   useEffect(() => {
     if (isOpen) {
       setStep(1);
       setSelectedDate(null);
-      setStartTime("");
-      setEndTime("");
-      setErrorMsg("");
-      setLoading(false);
+      setSelectedSlot(null);
       setCurrentDate(new Date());
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  // Calendar Helpers
+  const meta = BOOKING_META[bookingType];
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  const totalDays = new Date(year, month + 1, 0).getDate();
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
-  };
+  // Dates the user already booked (any type) — show in pink
+  const bookedDateKeys = new Set(
+    userBookings.map((b) => b.booked_date as string)
+  );
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-  };
+  // Slot IDs the user already booked on the selected date
+  const bookedSlotIdsOnSelectedDate = new Set(
+    userBookings
+      .filter(
+        (b) => selectedDate && b.booked_date === formatDateKey(selectedDate)
+      )
+      .map((b) => Number(b.slot_data))
+  );
 
-  // Convert "13:30" -> "01:30 PM"
-  const formatTimeTo12Hour = (time24: string) => {
-    if (!time24) return "";
-    let [hours, minutes] = time24.split(":");
-    let h = parseInt(hours, 10);
-    const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12 || 12;
-    const formatH = h < 10 ? `0${h}` : h;
-    return `${formatH}:${minutes} ${ampm}`;
-  };
+  const selectedDay = selectedDate?.toLocaleDateString("en-US", {
+    weekday: "long",
+  });
 
-  const handleNextStep = () => {
-    if (step === 1) {
-      if (!selectedDate) {
-        setErrorMsg("Please select a date first.");
-        return;
-      }
-      setErrorMsg("");
-      setStep(2);
-    } else if (step === 2) {
-      submitBooking();
-    }
+  const slotsForDay =
+    influencerSlots
+      ?.filter(
+        (item: any) =>
+          item?.day?.toLowerCase() === selectedDay?.toLowerCase()
+      )
+      ?.flatMap((item: any) => item?.slots || [])
+      ?.filter(
+        (slot: any) => slot?.is_booked === false && slot?.is_pause === false
+      ) || [];
+
+  const isPast = (date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d < today;
   };
 
   const submitBooking = async () => {
-    if (!startTime || !endTime) {
-      setErrorMsg("Please select both start and end time.");
-      return;
-    }
+    if (!selectedDate || !selectedSlot) return;
 
-    if (startTime >= endTime) {
-      setErrorMsg("End time must be later than start time.");
-      return;
-    }
-
-    if (!selectedDate) {
-      setErrorMsg("Please select a date.");
-      return;
-    }
-
-    if (!currentUser) {
-      setErrorMsg("You must be logged in to book.");
-      return;
-    }
-
-    if (!influencer) {
-      setErrorMsg("Influencer data is missing.");
-      return;
-    }
-
-    setLoading(true);
-    setErrorMsg("");
-
-    const dayName = selectedDate.toLocaleDateString("en-US", { weekday: "long" });
+    const stored = localStorage.getItem("celebstalk_user");
+    const user = stored ? JSON.parse(stored) : null;
 
     const payload = {
-      influencer: influencer.influencer_id || influencer.email,
-      booked_by: currentUser.email || currentUser.id || currentUser.user_id,
-      day: dayName,
-      start_time: formatTimeTo12Hour(startTime),
-      end_time: formatTimeTo12Hour(endTime),
+      influencer_data: String(influencer?.influencer_id || ""),
+      user_data: String(user?.email || ""),
+      slot_data: Number(selectedSlot?.id),
+      booking_type: bookingType,
+      booking_status: "confirmed",
+      service_data: [1],
+      service_charge: 2000,
+      booked_date: formatDateKey(selectedDate),
     };
 
     try {
-      await createInfluencerSlot(payload);
-      setStep(3); // Success!
-    } catch (err: any) {
-      console.error(err);
-      setErrorMsg(err.message || "This time is already taken — please choose another available slot.");
+      setLoading(true);
+      await createSlotBooking(payload);
+      setStep(3);
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Booking failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/20 backdrop-blur-sm p-4">
-        {/* BACKDROP CLOSER */}
-        <div className="absolute inset-0 cursor-pointer" onClick={onClose} />
-
-        {/* MODAL CONTENT */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="relative bg-white rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] w-full max-w-[360px] overflow-hidden border border-[var(--booking-border)] flex flex-col"
-        >
-          {/* HEADER */}
-          <div className="px-5 pt-5 pb-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[18px] font-bold text-[var(--booking-text-dark)]">
-                {step === 3 ? "Request sent" : "Booking a Slot"}
-              </h2>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-[var(--booking-text-dark)] transition"
-              >
-                <X size={20} strokeWidth={2} />
-              </button>
+    <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-end sm:items-center p-0 sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
+        {/* HEADER */}
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center border ${meta.bg}`}
+            >
+              <meta.Icon size={15} className={meta.color} strokeWidth={2} />
             </div>
-
-            {step < 3 && (
-              <div className="mt-2 flex flex-col">
-                <div className="flex items-center gap-1">
-                  <span className="text-[13px] text-[var(--booking-text-muted)] font-medium">
-                    {step === 1 ? "Step 1 of 3: Select Date" : "Step 2 of 3: Select Duration"}
-                  </span>
-                  <Info size={13} className="text-[var(--booking-text-light)]" />
-                </div>
-                {/* PROGRESS BAR */}
-                <div className="mt-2 h-[2px] w-full bg-[var(--booking-progress-bg)] rounded-full overflow-hidden flex transition-all duration-300">
-                  <div className={`h-full bg-[var(--booking-pink-solid-bg)] rounded-full relative z-10 transition-all duration-500 ${step === 1 ? 'w-1/3' : 'w-2/3'}`} />
-                  <div className="h-[2px] bg-[var(--booking-progress-bg)] w-full absolute bottom-0 -z-10" />
-                </div>
-              </div>
-            )}
+            <div>
+              <h2 className="font-semibold text-[15px] text-gray-900 leading-none">
+                Book {meta.label}
+              </h2>
+              {influencer?.full_name && (
+                <p className="text-[12px] text-gray-400 mt-0.5">
+                  with {influencer.full_name}
+                </p>
+              )}
+            </div>
           </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+          >
+            <X size={16} className="text-gray-500" />
+          </button>
+        </div>
 
-          {step < 3 && <div className="h-[1px] w-full bg-[var(--booking-border)] opacity-60" />}
-
-          {/* DYNAMIC BODY */}
-          <div className={`px-5 ${step === 3 ? "pb-5 pt-2" : "py-4"}`}>
-            {step === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                {/* MONTH SWITCHER */}
-                <div className="flex items-center justify-between mb-4">
-                  <button onClick={handlePrevMonth} className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
-                    <ChevronLeft size={18} />
-                  </button>
-                  <h3 className="text-[15px] font-bold text-[var(--booking-text-dark)]">
-                    {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                  </h3>
-                  <button onClick={handleNextMonth} className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
-                    <ChevronRight size={18} />
-                  </button>
+        {/* STEP INDICATOR */}
+        {step < 3 && (
+          <div className="flex items-center gap-1.5 px-5 py-3 bg-gray-50 border-b border-gray-100">
+            {[1, 2].map((s) => (
+              <div key={s} className="flex items-center gap-1.5">
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold transition-colors
+                  ${
+                    step >= s
+                      ? "bg-pink-500 text-white"
+                      : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  {s}
                 </div>
+                <span
+                  className={`text-[12px] font-medium ${
+                    step >= s ? "text-gray-700" : "text-gray-400"
+                  }`}
+                >
+                  {s === 1 ? "Pick Date" : "Pick Slot"}
+                </span>
+                {s < 2 && (
+                  <div
+                    className={`w-8 h-px mx-1 ${
+                      step > s ? "bg-pink-400" : "bg-gray-200"
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
-                {/* WEEKDAYS */}
-                <div className="grid grid-cols-7 gap-2 mb-2 text-center">
-                  {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
-                    <div key={i} className="text-[12px] font-bold text-[var(--booking-text-dark)]">
-                      {day}
+        <div className="p-5">
+          {/* ───────── STEP 1 – CALENDAR ───────── */}
+          {step === 1 && (
+            <>
+              {loadingSlots ? (
+                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500" />
+                  <p className="text-sm text-gray-400">Loading slots…</p>
+                </div>
+              ) : (
+                <>
+                  {/* MONTH NAV */}
+                  <div className="flex justify-between items-center mb-4">
+                    <button
+                      onClick={() =>
+                        setCurrentDate(new Date(year, month - 1, 1))
+                      }
+                      className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+                    >
+                      <ChevronLeft size={18} className="text-gray-600" />
+                    </button>
+                    <h3 className="font-semibold text-[15px] text-gray-800">
+                      {currentDate.toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </h3>
+                    <button
+                      onClick={() =>
+                        setCurrentDate(new Date(year, month + 1, 1))
+                      }
+                      className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+                    >
+                      <ChevronRight size={18} className="text-gray-600" />
+                    </button>
+                  </div>
+
+                  {/* DAY HEADERS */}
+                  <div className="grid grid-cols-7 mb-2">
+                    {DAYS_SHORT.map((d) => (
+                      <div
+                        key={d}
+                        className="text-center text-[11px] font-semibold text-gray-400 py-1"
+                      >
+                        {d}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* LEGEND */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-pink-500" />
+                      <span className="text-[11px] text-gray-500">
+                        Already booked
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-green-200" />
+                      <span className="text-[11px] text-gray-500">
+                        Available
+                      </span>
+                    </div>
+                  </div>
 
-                {/* DAYS GRID */}
-                <div className="grid grid-cols-7 gap-y-2 gap-x-1 sm:gap-x-2 text-center place-items-center">
-                  {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-                    <div key={`empty-${i}`} className="w-8 h-8" />
-                  ))}
-                  {Array.from({ length: daysInMonth }).map((_, i) => {
-                    const d = i + 1;
-                    const dateObj = new Date(year, month, d);
-                    const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    const isSelected = selectedDate?.getDate() === d && selectedDate?.getMonth() === month && selectedDate?.getFullYear() === year;
-                    
-                    let styles = isPast 
-                      ? "text-gray-300 cursor-not-allowed" 
-                      : isSelected 
-                      ? "bg-[var(--booking-pink-solid-bg)] text-white shadow-md font-bold" 
-                      : "bg-[var(--booking-green-bg)] text-[var(--booking-green-text)] hover:bg-[var(--booking-green-hover)]";
+                  {/* DATES GRID */}
+                  <div className="grid grid-cols-7 gap-y-1.5">
+                    {Array.from({ length: firstDay }).map((_, i) => (
+                      <div key={`empty-${i}`} />
+                    ))}
+
+                    {Array.from({ length: totalDays }).map((_, i) => {
+                      const d = i + 1;
+                      const date = new Date(year, month, d);
+                      const dateKey = formatDateKey(date);
+                      const past = isPast(date);
+                      const alreadyBooked = bookedDateKeys.has(dateKey);
+                      const isSelected =
+                        selectedDate?.getDate() === d &&
+                        selectedDate?.getMonth() === month &&
+                        selectedDate?.getFullYear() === year;
+
+                      return (
+                        <button
+                          key={d}
+                          disabled={past}
+                          onClick={() => {
+                            setSelectedDate(date);
+                            setSelectedSlot(null);
+                          }}
+                          className={`
+                            relative mx-auto w-9 h-9 rounded-full text-[13px] font-medium
+                            flex items-center justify-center transition-all duration-150
+                            ${past ? "opacity-30 cursor-not-allowed text-gray-400" : ""}
+                            ${
+                              !past && alreadyBooked
+                                ? "bg-pink-500 text-white"
+                                : !past
+                                ? "bg-green-100 text-green-800 hover:bg-green-200"
+                                : ""
+                            }
+                            ${
+                              isSelected
+                                ? "ring-2 ring-offset-1 ring-pink-500 scale-110"
+                                : ""
+                            }
+                          `}
+                        >
+                          {d}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* SELECTED DATE SUMMARY */}
+                  {selectedDate && (
+                    <div className="mt-4 flex items-center gap-2 bg-pink-50 border border-pink-100 rounded-xl px-3 py-2">
+                      <CalendarDays size={14} className="text-pink-500 shrink-0" />
+                      <p className="text-[13px] text-pink-700 font-medium">
+                        {selectedDate.toLocaleDateString("en-US", {
+                          weekday: "long",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => setStep(2)}
+                    disabled={!selectedDate}
+                    className="mt-4 w-full bg-pink-500 disabled:bg-gray-200 disabled:text-gray-400 text-white py-3 rounded-xl font-semibold text-[14px] transition-colors"
+                  >
+                    View Available Slots
+                  </button>
+                </>
+              )}
+            </>
+          )}
+
+          {/* ───────── STEP 2 – SLOTS ───────── */}
+          {step === 2 && (
+            <>
+              <div className="flex items-center gap-2 mb-4">
+                <Clock size={15} className="text-gray-400 shrink-0" />
+                <h3 className="font-semibold text-[14px] text-gray-700">
+                  {selectedDay},{" "}
+                  {selectedDate?.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </h3>
+              </div>
+
+              <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                {slotsForDay.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-2 text-gray-400">
+                    <Clock size={28} strokeWidth={1.5} />
+                    <p className="text-sm">No available slots on this day</p>
+                    <button
+                      onClick={() => setStep(1)}
+                      className="mt-1 text-[13px] text-pink-500 underline underline-offset-2"
+                    >
+                      Pick another date
+                    </button>
+                  </div>
+                ) : (
+                  slotsForDay.map((slot: any) => {
+                    const alreadyBooked = bookedSlotIdsOnSelectedDate.has(
+                      Number(slot.id)
+                    );
+                    const isSelected = selectedSlot?.id === slot.id;
 
                     return (
                       <button
-                        key={d}
-                        disabled={isPast}
-                        onClick={() => setSelectedDate(dateObj)}
-                        className={`w-[32px] h-[32px] rounded-full flex items-center justify-center text-[13px] transition-colors ${styles}`}
+                        key={slot.id}
+                        disabled={alreadyBooked}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`
+                          w-full border rounded-xl px-4 py-3 text-left transition-all duration-150
+                          ${
+                            alreadyBooked
+                              ? "bg-gray-50 border-gray-200 opacity-60 cursor-not-allowed"
+                              : isSelected
+                              ? "bg-pink-500 border-pink-500 text-white shadow-sm"
+                              : "bg-white border-gray-200 hover:border-pink-300 hover:bg-pink-50"
+                          }
+                        `}
                       >
-                        {d}
+                        <div className="flex items-center justify-between">
+                          <span
+                            className={`font-semibold text-[13px] ${
+                              isSelected
+                                ? "text-white"
+                                : alreadyBooked
+                                ? "text-gray-400"
+                                : "text-gray-800"
+                            }`}
+                          >
+                            {slot.start_time} – {slot.end_time}
+                          </span>
+                          {alreadyBooked && (
+                            <span className="text-[11px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">
+                              Already booked
+                            </span>
+                          )}
+                          {isSelected && !alreadyBooked && (
+                            <CheckCircle2
+                              size={16}
+                              className="text-white shrink-0"
+                            />
+                          )}
+                        </div>
                       </button>
                     );
-                  })}
-                </div>
-                {errorMsg && (
-                   <p className="text-red-500 text-xs mt-3 text-center">{errorMsg}</p>
+                  })
                 )}
-              </motion.div>
-            )}
+              </div>
 
-            {step === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="flex flex-col gap-4"
+              {/* BOOKING TYPE BADGE */}
+              <div
+                className={`mt-4 flex items-center gap-2 rounded-xl px-3 py-2 border ${meta.bg}`}
               >
-                <div className="text-sm text-[var(--booking-text-dark)] font-medium text-center">
-                  Selected Date: <span className="font-bold text-[var(--booking-pink-solid-bg)]">{selectedDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span>
-                </div>
+                <meta.Icon size={13} className={meta.color} strokeWidth={2} />
+                <span className={`text-[12px] font-medium ${meta.color}`}>
+                  Booking as: {meta.label}
+                </span>
+              </div>
 
-                <div className="flex flex-col gap-3 pb-2 pt-1">
-                  <div className="flex flex-col">
-                    <label className="text-xs font-semibold text-[var(--booking-text-muted)] mb-1 uppercase tracking-wide">Start Time</label>
-                    <input 
-                      type="time" 
-                      value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full py-2 px-3 rounded-lg border border-[var(--booking-border)] text-sm font-medium focus:outline-none focus:border-[var(--booking-pink-solid-bg)] transition-colors"
-                    />
-                  </div>
-
-                  <div className="flex flex-col">
-                    <label className="text-xs font-semibold text-[var(--booking-text-muted)] mb-1 uppercase tracking-wide">End Time</label>
-                    <input 
-                      type="time" 
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full py-2 px-3 rounded-lg border border-[var(--booking-border)] text-sm font-medium focus:outline-none focus:border-[var(--booking-pink-solid-bg)] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                {errorMsg && (
-                  <p className="text-red-500 text-xs font-medium text-center bg-red-50 p-2 rounded-lg border border-red-100">{errorMsg}</p>
-                )}
-              </motion.div>
-            )}
-
-            {step === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center w-full"
-              >
-                {/* AVATAR & NAME */}
-                <div className="mt-1 flex flex-col items-center">
-                  <div className="w-[66px] h-[66px] rounded-full overflow-hidden shadow-[0px_4px_15px_rgba(0,0,0,0.06)] shrink-0 border-[3px] border-white">
-                    {influencer?.image ? (
-                        <img src={influencer.image} alt={influencer.full_name} className="object-cover w-full h-full" />
-                    ) : (
-                        <div className="w-full h-full bg-gray-200"></div>
-                    )}
-                  </div>
-                  <h3 className="text-[15px] font-bold mt-2 text-[var(--booking-text-dark)] leading-none">{influencer?.full_name || "Influencer"}</h3>
-                  <p className="text-[11px] text-[var(--booking-text-light)] mt-1 tracking-wide">@{influencer?.influencer_id || "username"}</p>
-                </div>
-
-                {/* PENDING CARD */}
-                <div className="bg-[#fafafa] border border-[var(--booking-border)] rounded-[14px] p-5 mt-5 flex flex-col items-center text-center w-full shadow-sm">
-                  <div className="bg-[var(--booking-pink-light-bg)] text-[var(--booking-pink-solid-hover)] px-[14px] py-[3px] rounded-full text-[10px] font-bold tracking-wide mb-3">
-                    Success
-                  </div>
-                  <h4 className="text-[15px] font-bold text-[var(--booking-text-dark)] mb-2 tracking-tight">
-                    Your slot is created!
-                  </h4>
-                  <p className="text-[12px] text-[var(--booking-text-muted)] leading-[18px]">
-                    We successfully registered your slot with {influencer?.full_name || "them"}. You will be notified of any updates.
-                  </p>
-                </div>
-
-                {/* FOOTER BUTTONS IN STEP 3 */}
-                <div className="flex items-center gap-3 mt-6 w-full">
-                  <button
-                    onClick={onClose}
-                    className="flex-1 py-[10px] rounded-[10px] bg-[var(--booking-pink-solid-bg)] text-[12px] md:text-[13px] font-bold text-white transition-colors hover:bg-[var(--booking-pink-solid-hover)] shadow-sm"
-                  >
-                    Done
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          {step < 3 && (
-            <>
-              <div className="h-[1px] w-full border-t border-dashed border-[var(--booking-border-dashed)] mt-2" />
-              {/* FOOTER BUTTONS */}
-              <div className="px-5 py-4 flex items-center gap-3 bg-white">
+              <div className="flex gap-3 mt-4">
                 <button
-                  onClick={() => {
-                    if (step > 1) {
-                      setStep(step - 1);
-                      setErrorMsg("");
-                    } else {
-                      onClose();
-                    }
-                  }}
-                  className="flex-1 py-[10px] rounded-[12px] border border-[var(--booking-btn-border)] text-[14px] font-bold text-[var(--booking-text-muted)] transition-colors hover:bg-gray-50 bg-white"
+                  onClick={() => setStep(1)}
+                  className="flex-1 border border-gray-200 py-3 rounded-xl text-[14px] font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
                 >
-                  {step === 1 ? "Cancel" : "Back"}
+                  Back
                 </button>
                 <button
-                  onClick={handleNextStep}
-                  disabled={loading}
-                  className="flex-1 py-[10px] rounded-[12px] bg-[var(--booking-pink-solid-bg)] text-[14px] font-bold text-white transition-colors hover:bg-[var(--booking-pink-solid-hover)] shadow-[0px_4px_10px_rgba(236,72,153,0.2)] disabled:opacity-70 flex items-center justify-center gap-2"
+                  onClick={submitBooking}
+                  disabled={!selectedSlot || loading}
+                  className="flex-1 bg-pink-500 disabled:bg-gray-200 disabled:text-gray-400 text-white py-3 rounded-xl text-[14px] font-semibold transition-colors"
                 >
                   {loading ? (
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  ) : null}
-                  {step === 2 ? "Book Slot" : "Next"}
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                      Booking…
+                    </span>
+                  ) : (
+                    "Confirm Booking"
+                  )}
                 </button>
               </div>
             </>
           )}
-        </motion.div>
+
+          {/* ───────── STEP 3 – SUCCESS ───────── */}
+          {step === 3 && (
+            <div className="flex flex-col items-center text-center py-8 gap-4">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 size={32} className="text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-900">
+                  Booked Successfully!
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Your {meta.label.toLowerCase()} with {influencer?.full_name}{" "}
+                  is confirmed.
+                </p>
+              </div>
+
+              {/* Summary card */}
+              <div className="w-full bg-gray-50 rounded-xl border border-gray-100 divide-y divide-gray-100 text-left">
+                <div className="flex items-center gap-2.5 px-4 py-3">
+                  <CalendarDays size={14} className="text-gray-400 shrink-0" />
+                  <span className="text-[13px] text-gray-700">
+                    {selectedDate?.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 px-4 py-3">
+                  <Clock size={14} className="text-gray-400 shrink-0" />
+                  <span className="text-[13px] text-gray-700">
+                    {selectedSlot?.start_time} – {selectedSlot?.end_time}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5 px-4 py-3">
+                  <meta.Icon
+                    size={14}
+                    className={`${meta.color} shrink-0`}
+                    strokeWidth={2}
+                  />
+                  <span className={`text-[13px] font-medium ${meta.color}`}>
+                    {meta.label}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-full bg-pink-500 text-white py-3 rounded-xl font-semibold text-[14px] mt-2"
+              >
+                Done
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </AnimatePresence>
+    </div>
   );
 }
