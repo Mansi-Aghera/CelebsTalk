@@ -11,7 +11,7 @@ import { auth } from "../../lib/firebase";
 import { useRouter } from "next/navigation";
 import { getUserById, getUserByMobile } from "@/services/api";
 import { fadeUp, scaleIn, slideRight } from "@/lib/animations";
-import { checkUserExists, loginUser , registerUser } from "@/services/api";
+import { checkUserExists, loginUser, registerUser } from "@/services/api";
 
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
@@ -63,7 +63,8 @@ export default function LoginFlow() {
   const [otpContext, setOtpContext] = useState<OtpContext>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false);
+  const [showResetConfirmPassword, setShowResetConfirmPassword] =
+    useState(false);
 
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -87,7 +88,9 @@ export default function LoginFlow() {
   }, [email, method, mobileDigitsOnly.length, password]);
 
   const canSubmitForgot = useMemo(() => {
-    return method === "email" ? email.trim().length > 0 : mobileDigitsOnly.length >= 8;
+    return method === "email"
+      ? email.trim().length > 0
+      : mobileDigitsOnly.length >= 8;
   }, [email, method, mobileDigitsOnly.length]);
 
   const canVerifyOtp = otpValue.length === otpLength;
@@ -121,70 +124,70 @@ export default function LoginFlow() {
     }
   };
 
-const handleGoogleLogin = async () => {
-  try {
-    clearMessages();
-    setIsSubmitting(true);
+  const handleGoogleLogin = async () => {
+    try {
+      clearMessages();
+      setIsSubmitting(true);
 
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
 
-    const user = result.user;
+      const user = result.user;
 
-    const email = user.email || "";
-    const fullName = user.displayName || "User";
+      const email = user.email || "";
+      const fullName = user.displayName || "User";
 
-const fetchUser = async (user_id: string) => {
-  const userData = await getUserById(user_id);
+      const fetchUser = async (user_id: string) => {
+        const userData = await getUserById(user_id);
 
-  localStorage.setItem(
-    "celebstalk_user",
-    JSON.stringify(userData)
-  );
-};
+        localStorage.setItem("celebstalk_user", JSON.stringify(userData));
+      };
 
-    setSuccessMessage("Login successful. Redirecting...");
+      setSuccessMessage("Login successful. Redirecting...");
 
-    setTimeout(() => {
-      router.push("/");
-    }, 500);
-  } catch (error) {
-    setErrorMessage("Google login failed.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
+    } catch (error) {
+      setErrorMessage("Google login failed.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+  const generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
 
-const generateOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
+  const handleMobileSendOtp = async () => {
+    try {
+      clearMessages();
+      setIsSubmitting(true);
 
-const handleMobileSendOtp = async () => {
-  try {
-    clearMessages();
-    setIsSubmitting(true);
+      const newOtp = generateOtp();
 
-    const newOtp = generateOtp();
+      localStorage.setItem("celebstalk_mobile_otp", newOtp);
+      localStorage.setItem("celebstalk_mobile_number", mobileDigitsOnly);
 
-    localStorage.setItem("celebstalk_mobile_otp", newOtp);
-    localStorage.setItem("celebstalk_mobile_number", mobileDigitsOnly);
+      await sendOtp(mobileDigitsOnly, newOtp);
 
-    await sendOtp(mobileDigitsOnly, newOtp);
+      resetOtpState();
+      setOtpContext("login");
+      setStep("otp");
 
-    resetOtpState();
-    setOtpContext("login");
-    setStep("otp");
+      setSuccessMessage(`OTP sent to +${mobileDigitsOnly}`);
+    } catch (error) {
+      setErrorMessage("Failed to send OTP.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    setSuccessMessage(`OTP sent to +${mobileDigitsOnly}`);
-  } catch (error) {
-    setErrorMessage("Failed to send OTP.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-  const loginAndRedirect = async (payload: { email?: string; password?: string; mobile?: string }) => {
+  const loginAndRedirect = async (payload: {
+    email?: string;
+    password?: string;
+    mobile?: string;
+  }) => {
     const response = await loginUser(payload);
     persistSession(response);
     setSuccessMessage("Login successful. Redirecting...");
@@ -242,7 +245,10 @@ const handleMobileSendOtp = async () => {
       setStep("otp");
       setSuccessMessage(`OTP sent to +${mobileDigitsOnly}.`);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to login at the moment.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to login at the moment.";
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -268,57 +274,56 @@ const handleMobileSendOtp = async () => {
     }
   };
 
+  const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    clearMessages();
 
-const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  clearMessages();
+    try {
+      setIsSubmitting(true);
 
-  try {
-    setIsSubmitting(true);
+      const enteredOtp = otp.join("");
+      const savedOtp = localStorage.getItem("celebstalk_mobile_otp");
+      const mobileNumber =
+        localStorage.getItem("celebstalk_mobile_number") || mobileDigitsOnly;
 
-    const enteredOtp = otp.join("");
-    const savedOtp = localStorage.getItem("celebstalk_mobile_otp");
-    const mobileNumber =
-      localStorage.getItem("celebstalk_mobile_number") || mobileDigitsOnly;
+      if (enteredOtp !== savedOtp) {
+        setErrorMessage("Invalid OTP.");
+        return;
+      }
 
-    if (enteredOtp !== savedOtp) {
-      setErrorMessage("Invalid OTP.");
-      return;
+      // remove used otp
+      localStorage.removeItem("celebstalk_mobile_otp");
+
+      const existing = await getUserByMobile(mobileNumber);
+
+      if (!existing?.data?.length) {
+        await registerUser({
+          user_id: mobileNumber,
+          full_name: "User",
+          email: "",
+          mobile: mobileNumber,
+        });
+      }
+
+      // save session
+      localStorage.setItem(
+        "celebstalk_user",
+        JSON.stringify({
+          mobile: mobileNumber,
+        }),
+      );
+
+      setSuccessMessage("Login successful. Redirecting...");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
+    } catch (error) {
+      setErrorMessage("OTP verification failed.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // remove used otp
-    localStorage.removeItem("celebstalk_mobile_otp");
-
-    const existing = await getUserByMobile(mobileNumber);
-
-    if (!existing?.data?.length) {
-      await registerUser({
-        user_id: mobileNumber,
-        full_name: "User",
-        email: "",
-        mobile: mobileNumber,
-      });
-    }
-
-    // save session
-    localStorage.setItem(
-      "celebstalk_user",
-      JSON.stringify({
-        mobile: mobileNumber,
-      })
-    );
-
-    setSuccessMessage("Login successful. Redirecting...");
-
-    setTimeout(() => {
-      router.push("/");
-    }, 500);
-  } catch (error) {
-    setErrorMessage("OTP verification failed.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   const handleResetSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -372,12 +377,20 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
           <h1 className="text-4xl font-semibold italic text-[#f00798] [font-family:'Times_New_Roman',serif]">
             Celebstalk
           </h1>
-          <p className="mt-1 text-xs text-[#5e5564]">Talk to the Stars, Anytime</p>
+          <p className="mt-1 text-xs text-[#5e5564]">
+            Talk to the Stars, Anytime
+          </p>
         </div>
 
         <div className="px-5 pb-7 pt-5 sm:px-6">
           <AnimatePresence mode="wait">
-            <motion.div key={step} variants={slideRight} initial="hidden" animate="visible" exit="hidden">
+            <motion.div
+              key={step}
+              variants={slideRight}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
               <h2 className="text-center text-xl font-semibold text-[#17131c]">
                 {step === "login" && "Login to get started!"}
                 {step === "otp" && "Verify your number"}
@@ -414,7 +427,13 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
               )}
 
               {step === "login" && (
-                <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleLoginSubmit} className="mt-4 space-y-3">
+                <motion.form
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  onSubmit={handleLoginSubmit}
+                  className="mt-4 space-y-3"
+                >
                   {method === "email" ? (
                     <>
                       {/* <input
@@ -464,17 +483,18 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                       >
                         Forgot Password?
                       </button> */}
-                      
-                       <button
-  type="button"
-  onClick={handleGoogleLogin}
-  disabled={isSubmitting}
-  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc] disabled:opacity-60"
->
-  <FcGoogle size={18} />
-  {isSubmitting ? "Please wait..." : "Continue with Google"}
-</button>
-           
+
+                      <button
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        disabled={isSubmitting}
+                        className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc] disabled:opacity-60"
+                      >
+                        <FcGoogle size={18} />
+                        {isSubmitting
+                          ? "Please wait..."
+                          : "Continue with Google"}
+                      </button>
                     </>
                   ) : (
                     <>
@@ -486,23 +506,28 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                         required
                         className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
                       />
-                
 
-<button
-  type="button"
-  onClick={handleMobileSendOtp}
-  disabled={!canSubmitLogin || isSubmitting}
-  className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
->
-  {isSubmitting ? "Please wait..." : "Send OTP"}
-</button>
+                      <button
+                        type="button"
+                        onClick={handleMobileSendOtp}
+                        disabled={!canSubmitLogin || isSubmitting}
+                        className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isSubmitting ? "Please wait..." : "Send OTP"}
+                      </button>
                     </>
                   )}
                 </motion.form>
               )}
 
               {step === "forgot" && (
-                <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleForgotSubmit} className="mt-4 space-y-3">
+                <motion.form
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  onSubmit={handleForgotSubmit}
+                  className="mt-4 space-y-3"
+                >
                   {method === "email" ? (
                     <>
                       {/* <input
@@ -538,7 +563,13 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
               )}
 
               {step === "otp" && (
-                <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleOtpSubmit} className="mt-4 space-y-4">
+                <motion.form
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  onSubmit={handleOtpSubmit}
+                  className="mt-4 space-y-4"
+                >
                   <div className="flex items-center justify-between gap-2">
                     {otp.map((digit, index) => (
                       <input
@@ -547,8 +578,12 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                         value={digit}
                         maxLength={1}
                         inputMode="numeric"
-                        onChange={(event) => handleOtpChange(index, event.target.value)}
-                        onKeyDown={(event) => handleOtpKeyDown(index, event.key)}
+                        onChange={(event) =>
+                          handleOtpChange(index, event.target.value)
+                        }
+                        onKeyDown={(event) =>
+                          handleOtpKeyDown(index, event.key)
+                        }
                         className="h-11 w-11 rounded-lg border border-[#d8d2df] text-center text-base font-semibold outline-none focus:border-[#9f2fff] sm:h-12 sm:w-12"
                         required
                       />
@@ -566,7 +601,13 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
               )}
 
               {step === "reset" && (
-                <motion.form variants={fadeUp} initial="hidden" animate="visible" onSubmit={handleResetSubmit} className="mt-4 space-y-3">
+                <motion.form
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  onSubmit={handleResetSubmit}
+                  className="mt-4 space-y-3"
+                >
                   <div className="relative">
                     <input
                       type={showResetPassword ? "text" : "password"}
@@ -579,10 +620,16 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                     <button
                       type="button"
                       className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#726a7a]"
-                      aria-label={showResetPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showResetPassword ? "Hide password" : "Show password"
+                      }
                       onClick={() => setShowResetPassword((prev) => !prev)}
                     >
-                      {showResetPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showResetPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
 
@@ -590,7 +637,9 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                     <input
                       type={showResetConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
-                      onChange={(event) => setConfirmPassword(event.target.value)}
+                      onChange={(event) =>
+                        setConfirmPassword(event.target.value)
+                      }
                       placeholder="Re-enter your password"
                       className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 pr-10 text-sm outline-none focus:border-[#9f2fff]"
                       required
@@ -598,10 +647,20 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
                     <button
                       type="button"
                       className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#726a7a]"
-                      aria-label={showResetConfirmPassword ? "Hide password" : "Show password"}
-                      onClick={() => setShowResetConfirmPassword((prev) => !prev)}
+                      aria-label={
+                        showResetConfirmPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      onClick={() =>
+                        setShowResetConfirmPassword((prev) => !prev)
+                      }
                     >
-                      {showResetConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showResetConfirmPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
 
@@ -630,7 +689,9 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
               )}
 
               <p className="mt-4 text-center text-[10px] text-[#938b9b]">
-                By continuing, you agree to our <span className="font-semibold">Terms of use</span> & <span className="font-semibold">Privacy Policy</span>.
+                By continuing, you agree to our{" "}
+                <span className="font-semibold">Terms of use</span> &{" "}
+                <span className="font-semibold">Privacy Policy</span>.
               </p>
             </motion.div>
           </AnimatePresence>
