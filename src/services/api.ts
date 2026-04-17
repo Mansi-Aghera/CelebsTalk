@@ -277,3 +277,71 @@ export async function getUserBookings(user_id: string) {
     }))
   );
 }
+
+// export async function checkUserExists(email: string) {
+//   const response = await fetch(
+//     `https://celebstalks.pythonanywhere.com/user/${email}`
+//   );
+
+//   return response.json();
+// }
+
+export async function checkUserExists(email: string) {
+  const encodedEmail = encodeURIComponent(email);
+
+  const response = await fetch(
+    `https://celebstalks.pythonanywhere.com/user/${encodedEmail}/`
+  );
+
+  return response.json();
+}
+
+export async function registerUser(payload: {
+  user_id: string;
+  full_name: string;
+  email: string;
+  mobile?: string; 
+}) {
+  const response = await fetch(
+    "https://celebstalks.pythonanywhere.com/user/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  return response.json();
+}
+
+export async function getUserById(user_id: string) {
+  return fetchAPI<{ data: any }>(`user/${user_id}/`).then(res => res.data);
+}
+
+export async function getUserByMobile(mobile: string) {
+  return fetchAPI<{ data: any[] }>(`user/?mobile=${mobile}`);
+}
+
+export async function createInfluencerSlot(payload: {
+  influencer: string;
+  booked_by: string;
+  day: string;
+  start_time: string;
+  end_time: string;
+}) {
+  const response = await fetch(`${BASE_URL}/influencer_slot/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || data.detail || "Failed to create slot");
+  }
+  return data;
+}

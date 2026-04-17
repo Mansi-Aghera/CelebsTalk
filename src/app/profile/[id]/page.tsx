@@ -277,7 +277,7 @@ if (isLoading) {
       <BookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
-        // 🔥 PASS DATA
+        influencer={influencer}
       />
 
       {/* FLOATING BUTTONS (UI SAME) */}

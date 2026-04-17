@@ -291,7 +291,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -301,25 +301,32 @@ import { motion, AnimatePresence } from "framer-motion";
 import Container from "./Container";
 import { cn } from "@/lib/utils";
 import Button from "../ui/Button";
+import ProfileDropdown from "../ui/ProfileDropdown";
 
 const navLinks = [
   { label: "", href: "/" },
   { label: "Explore", href: "/explore" },
   { label: "Categories", href: "/categories" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Blog", href: "/my-services" },
+  { label: "How it works", href: "#" },
+  { label: "Blog", href: "#" },
   { label: "For Celebrity", href: "#" },
 ];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-
+const [user, setUser] = useState<any>(null);
   // Hide the navbar on the chat page
   if (pathname?.startsWith("/chat")) return null;
 
+useEffect(() => {
+  const storedUser = localStorage.getItem("celebstalk_user");
+  if (storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
+}, []);
   return (
-    <header className="w-full fixed left-0 right-0 top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[var(--neutral-200)] overflow-x-hidden">
+    <header className="w-full fixed left-0 right-0 top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[var(--neutral-200)] overflow-visible">
       <Container>
         <div className="flex items-center justify-between h-[72px]">
 
@@ -381,9 +388,13 @@ export default function Navbar() {
               Call
             </Button>
 
-            <Button variant="soft" href="/login">
-              Login
-            </Button>
+            {user ? (
+  <ProfileDropdown user={user} />
+) : (
+  <Button variant="soft" href="/login">
+    Login
+  </Button>
+)}
           </div>
 
           {/* Mobile Menu Button */}

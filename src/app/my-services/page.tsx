@@ -9,8 +9,8 @@ import useSWR from "swr";
 import { getUserBookings } from "@/services/api";
 
 export default function HowItWorksPage() {
-  // const userId = "YOUR_USER_ID"; // 🔥 dynamic kar later (auth thi)
-  const userId = "9044020400";
+  const userId = "YOUR_USER_ID"; // 🔥 dynamic kar later (auth thi)
+  
 
 const { data } = useSWR(
   ["bookings", userId],

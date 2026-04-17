@@ -18,8 +18,8 @@ import useSWR from "swr";
 import { getUserTransactions } from "@/services/api";
 
 export default function HowItWorksPage() {
-  // const userId = "YOUR_USER_ID"; // 🔥 dynamic kar later (auth thi)
-  const userId = "7045868781";
+  const userId = "YOUR_USER_ID"; // 🔥 dynamic kar later (auth thi)
+  
 
 const { data } = useSWR(
   ["transactions", userId],

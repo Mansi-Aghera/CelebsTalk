@@ -4,11 +4,18 @@ import { FormEvent, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+
+import { sendSignInLinkToEmail } from "firebase/auth";
+import { auth } from "../../lib/firebase";
+
 import { useRouter } from "next/navigation";
-
+import { getUserById, getUserByMobile } from "@/services/api";
 import { fadeUp, scaleIn, slideRight } from "@/lib/animations";
-import { loginUser } from "@/services/api";
+import { checkUserExists, loginUser , registerUser } from "@/services/api";
 
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+import { sendOtp } from "../../lib/mobileOtpService";
 type AuthMethod = "email" | "mobile";
 type AuthStep = "login" | "otp" | "forgot" | "reset";
 type OtpContext = "login" | "reset";
@@ -111,9 +118,83 @@ export default function LoginFlow() {
     const user = responseData?.user || responseData?.data?.user;
 
     if (user) {
-      localStorage.setItem("celebstalk_user", JSON.stringify(user));
-    }
+const fetchUser = async (user_id: string) => {
+  const res = await fetch(
+    `https://celebstalks.pythonanywhere.com/user/${user_id}/`
+  );
+
+  const data = await res.json();
+
+  localStorage.setItem("celebstalk_user", JSON.stringify(data));
+};    }
   };
+
+const handleGoogleLogin = async () => {
+  try {
+    clearMessages();
+    setIsSubmitting(true);
+
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    const email = user.email || "";
+    const fullName = user.displayName || "User";
+
+    localStorage.setItem("celebstalk_user", JSON.stringify(user));
+
+    const existing = await checkUserExists(email);
+    console.log("existing:::>>>",existing);  
+
+    if (!existing?.data?.length) {
+      await registerUser({
+        user_id: email,
+        full_name: fullName,
+        email,
+      });
+    }
+
+    setSuccessMessage("Login successful. Redirecting...");
+
+    setTimeout(() => {
+      router.push("/");
+    }, 500);
+  } catch (error) {
+    setErrorMessage("Google login failed.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
+const generateOtp = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+const handleMobileSendOtp = async () => {
+  try {
+    clearMessages();
+    setIsSubmitting(true);
+
+    const newOtp = generateOtp();
+
+    localStorage.setItem("celebstalk_mobile_otp", newOtp);
+    localStorage.setItem("celebstalk_mobile_number", mobileDigitsOnly);
+
+    await sendOtp(mobileDigitsOnly, newOtp);
+
+    resetOtpState();
+    setOtpContext("login");
+    setStep("otp");
+
+    setSuccessMessage(`OTP sent to +${mobileDigitsOnly}`);
+  } catch (error) {
+    setErrorMessage("Failed to send OTP.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const loginAndRedirect = async (payload: { email?: string; password?: string; mobile?: string }) => {
     const response = await loginUser(payload);
@@ -199,31 +280,59 @@ export default function LoginFlow() {
     }
   };
 
-  const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    clearMessages();
 
-    if (!canVerifyOtp) {
-      setErrorMessage("Please enter the 6-digit code.");
-      return;
-    }
+const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  clearMessages();
 
-    if (otpContext === "reset") {
-      setStep("reset");
-      setSuccessMessage("OTP verified. Please set your new password.");
-      return;
-    }
-
+  try {
     setIsSubmitting(true);
-    try {
-      await loginAndRedirect({ mobile: mobileDigitsOnly });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to verify OTP right now.";
-      setErrorMessage(message);
-    } finally {
-      setIsSubmitting(false);
+
+    const enteredOtp = otp.join("");
+    const savedOtp = localStorage.getItem("celebstalk_mobile_otp");
+    const mobileNumber =
+      localStorage.getItem("celebstalk_mobile_number") || mobileDigitsOnly;
+
+    if (enteredOtp !== savedOtp) {
+      setErrorMessage("Invalid OTP.");
+      return;
     }
-  };
+
+    // remove used otp
+    localStorage.removeItem("celebstalk_mobile_otp");
+
+    const existing = await fetch(
+      `https://celebstalks.pythonanywhere.com/user/?mobile=${mobileNumber}`
+    ).then((res) => res.json());
+
+    if (!existing?.data?.length) {
+      await registerUser({
+        user_id: mobileNumber,
+        full_name: "User",
+        email: "",
+        mobile: mobileNumber,
+      });
+    }
+
+    // save session
+    localStorage.setItem(
+      "celebstalk_user",
+      JSON.stringify({
+        mobile: mobileNumber,
+      })
+    );
+
+    setSuccessMessage("Login successful. Redirecting...");
+
+    setTimeout(() => {
+      router.push("/");
+    }, 500);
+  } catch (error) {
+    setErrorMessage("OTP verification failed.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleResetSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -370,13 +479,16 @@ export default function LoginFlow() {
                         Forgot Password?
                       </button> */}
                       
-                      <button
-                        type="button"
-                        className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc]"
-                      >
-                        <FcGoogle size={18} />
-                        Continue with Google
-                      </button>
+                       <button
+  type="button"
+  onClick={handleGoogleLogin}
+  disabled={isSubmitting}
+  className="flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#ded7e5] text-sm font-medium text-[#4a4451] hover:bg-[#faf8fc] disabled:opacity-60"
+>
+  <FcGoogle size={18} />
+  {isSubmitting ? "Please wait..." : "Continue with Google"}
+</button>
+           
                     </>
                   ) : (
                     <>
@@ -388,13 +500,16 @@ export default function LoginFlow() {
                         required
                         className="h-11 w-full rounded-lg border border-[#ddd8e2] px-3 text-sm outline-none focus:border-[#9f2fff]"
                       />
-                      <button
-                        type="submit"
-                        disabled={!canSubmitLogin || isSubmitting}
-                        className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {isSubmitting ? "Please wait..." : "Send OTP"}
-                      </button>
+                
+
+<button
+  type="button"
+  onClick={handleMobileSendOtp}
+  disabled={!canSubmitLogin || isSubmitting}
+  className="h-11 w-full rounded-lg bg-[#9f2fff] text-sm font-medium text-white transition hover:bg-[#8b22e7] disabled:cursor-not-allowed disabled:opacity-60"
+>
+  {isSubmitting ? "Please wait..." : "Send OTP"}
+</button>
                     </>
                   )}
                 </motion.form>
