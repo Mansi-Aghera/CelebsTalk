@@ -248,33 +248,32 @@ export async function getUserTransactions(user_id: string) {
 //----- services
 
 export async function getUserBookings(user_id: string) {
-  return fetchAPI<{ data: any[] }>(
-    `service_booking/user_id/${user_id}/`
-  ).then((res) =>
-    res.data.map((item) => ({
-      id: item.id,
+  return fetchAPI<{ data: any[] }>(`service_booking/user_id/${user_id}/`).then(
+    (res) =>
+      res.data.map((item) => ({
+        id: item.id,
 
-      // ✅ COL 1
-      serviceName: item.services_data?.[0]?.name || "-",
+        // ✅ COL 1
+        serviceName: item.services_data?.[0]?.name || "-",
 
-      // ✅ COL 2
-      influencerName: item.influencer_data?.full_name || "-",
+        // ✅ COL 2
+        influencerName: item.influencer_data?.full_name || "-",
 
-      // ✅ COL 3
-      status: item.booking_status || "-",
+        // ✅ COL 3
+        status: item.booking_status || "-",
 
-      // ✅ COL 4
-      totalPaid: `₹${item.total_paid || 0}`,
+        // ✅ COL 4
+        totalPaid: `₹${item.total_paid || 0}`,
 
-      // ✅ COL 5
-      createdAt: new Date(item.created_at).toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    }))
+        // ✅ COL 5
+        createdAt: new Date(item.created_at).toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      })),
   );
 }
 
@@ -290,7 +289,7 @@ export async function checkUserExists(email: string) {
   const encodedEmail = encodeURIComponent(email);
 
   const response = await fetch(
-    `https://celebstalks.pythonanywhere.com/user/${encodedEmail}/`
+    `https://celebstalks.pythonanywhere.com/user/${encodedEmail}/`,
   );
 
   return response.json();
@@ -300,24 +299,21 @@ export async function registerUser(payload: {
   user_id: string;
   full_name: string;
   email: string;
-  mobile?: string; 
+  mobile?: string;
 }) {
-  const response = await fetch(
-    "https://celebstalks.pythonanywhere.com/user/",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }
-  );
+  const response = await fetch("https://celebstalks.pythonanywhere.com/user/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
   return response.json();
 }
 
 export async function getUserById(user_id: string) {
-  return fetchAPI<{ data: any }>(`user/${user_id}/`).then(res => res.data);
+  return fetchAPI<{ data: any }>(`user/${user_id}/`).then((res) => res.data);
 }
 
 export async function getUserByMobile(mobile: string) {
@@ -364,7 +360,7 @@ export const createSlotBooking = async (payload: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
-    }
+    },
   );
 
   const data = await res.json();
