@@ -9,7 +9,7 @@ import { sendSignInLinkToEmail } from "firebase/auth";
 import { auth } from "../../lib/firebase";
 
 import { useRouter } from "next/navigation";
-
+import { getUserById, getUserByMobile } from "@/services/api";
 import { fadeUp, scaleIn, slideRight } from "@/lib/animations";
 import { checkUserExists, loginUser , registerUser } from "@/services/api";
 
@@ -118,7 +118,6 @@ export default function LoginFlow() {
     const user = responseData?.user || responseData?.data?.user;
 
     if (user) {
-      localStorage.setItem("celebstalk_user", JSON.stringify(user));
     }
   };
 
@@ -135,18 +134,14 @@ const handleGoogleLogin = async () => {
     const email = user.email || "";
     const fullName = user.displayName || "User";
 
-    localStorage.setItem("celebstalk_user", JSON.stringify(user));
+const fetchUser = async (user_id: string) => {
+  const userData = await getUserById(user_id);
 
-    const existing = await checkUserExists(email);
-    console.log("existing:::>>>",existing);  
-
-    if (!existing?.data?.length) {
-      await registerUser({
-        user_id: email,
-        full_name: fullName,
-        email,
-      });
-    }
+  localStorage.setItem(
+    "celebstalk_user",
+    JSON.stringify(userData)
+  );
+};
 
     setSuccessMessage("Login successful. Redirecting...");
 
@@ -294,9 +289,7 @@ const handleOtpSubmit = async (event: FormEvent<HTMLFormElement>) => {
     // remove used otp
     localStorage.removeItem("celebstalk_mobile_otp");
 
-    const existing = await fetch(
-      `https://celebstalks.pythonanywhere.com/user/?mobile=${mobileNumber}`
-    ).then((res) => res.json());
+    const existing = await getUserByMobile(mobileNumber);
 
     if (!existing?.data?.length) {
       await registerUser({

@@ -4,42 +4,141 @@ import { X, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { createInfluencerSlot } from "@/services/api";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  influencer?: any;
 }
 
-type DayType = "green" | "pink-solid" | "pink-light" | "purple-solid" | "empty";
-
-const days: { date: number | null; type: DayType }[] = [
-  { date: null, type: "empty" },
-  { date: 1, type: "green" }, { date: 2, type: "green" }, { date: 3, type: "green" }, { date: 4, type: "pink-solid" }, { date: 5, type: "green" }, { date: 6, type: "green" },
-  { date: 7, type: "green" }, { date: 8, type: "pink-solid" }, { date: 9, type: "pink-light" }, { date: 10, type: "green" }, { date: 11, type: "green" }, { date: 12, type: "green" }, { date: 13, type: "green" },
-  { date: 14, type: "green" }, { date: 15, type: "pink-solid" }, { date: 16, type: "pink-light" }, { date: 17, type: "green" }, { date: 18, type: "green" }, { date: 19, type: "purple-solid" }, { date: 20, type: "green" },
-  { date: 21, type: "green" }, { date: 22, type: "green" }, { date: 23, type: "pink-solid" }, { date: 24, type: "pink-light" }, { date: 25, type: "green" }, { date: 26, type: "green" }, { date: 27, type: "green" },
-  { date: 28, type: "green" }, { date: 29, type: "green" }, { date: 30, type: "green" }, { date: 31, type: "green" },
-];
-
-const timeSlots = [
-  { time: "10:00 AM", type: "pink-light" }, { time: "10:30 AM", type: "purple-solid" },
-  { time: "10:00 AM", type: "pink-solid" }, { time: "11:30 AM", type: "green" },
-  { time: "12:00 PM", type: "green" }, { time: "12:30 PM", type: "pink-solid" },
-  { time: "01:00 PM", type: "green" }, { time: "01:30 PM", type: "green" },
-  { time: "02:00 PM", type: "green" }, { time: "02:30 PM", type: "pink-light" },
-];
-
-export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
+export default function BookingModal({ isOpen, onClose, influencer }: BookingModalProps) {
   const [step, setStep] = useState(1);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("celebstalk_user");
+      if (stored) {
+        try {
+          setCurrentUser(JSON.parse(stored));
+        } catch (e) {
+          console.error("Invalid user data");
+        }
+      }
+    }
+  }, []);
 
   // Reset to step 1 when the modal opens
   useEffect(() => {
     if (isOpen) {
       setStep(1);
+      setSelectedDate(null);
+      setStartTime("");
+      setEndTime("");
+      setErrorMsg("");
+      setLoading(false);
+      setCurrentDate(new Date());
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  // Calendar Helpers
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  // Convert "13:30" -> "01:30 PM"
+  const formatTimeTo12Hour = (time24: string) => {
+    if (!time24) return "";
+    let [hours, minutes] = time24.split(":");
+    let h = parseInt(hours, 10);
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    const formatH = h < 10 ? `0${h}` : h;
+    return `${formatH}:${minutes} ${ampm}`;
+  };
+
+  const handleNextStep = () => {
+    if (step === 1) {
+      if (!selectedDate) {
+        setErrorMsg("Please select a date first.");
+        return;
+      }
+      setErrorMsg("");
+      setStep(2);
+    } else if (step === 2) {
+      submitBooking();
+    }
+  };
+
+  const submitBooking = async () => {
+    if (!startTime || !endTime) {
+      setErrorMsg("Please select both start and end time.");
+      return;
+    }
+
+    if (startTime >= endTime) {
+      setErrorMsg("End time must be later than start time.");
+      return;
+    }
+
+    if (!selectedDate) {
+      setErrorMsg("Please select a date.");
+      return;
+    }
+
+    if (!currentUser) {
+      setErrorMsg("You must be logged in to book.");
+      return;
+    }
+
+    if (!influencer) {
+      setErrorMsg("Influencer data is missing.");
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg("");
+
+    const dayName = selectedDate.toLocaleDateString("en-US", { weekday: "long" });
+
+    const payload = {
+      influencer: influencer.influencer_id || influencer.email,
+      booked_by: currentUser.email || currentUser.id || currentUser.user_id,
+      day: dayName,
+      start_time: formatTimeTo12Hour(startTime),
+      end_time: formatTimeTo12Hour(endTime),
+    };
+
+    try {
+      await createInfluencerSlot(payload);
+      setStep(3); // Success!
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || "This time is already taken — please choose another available slot.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -73,7 +172,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               <div className="mt-2 flex flex-col">
                 <div className="flex items-center gap-1">
                   <span className="text-[13px] text-[var(--booking-text-muted)] font-medium">
-                    {step === 1 ? "Step 1 of 3: Select Date" : "Step 2 of 3: Select an available slot"}
+                    {step === 1 ? "Step 1 of 3: Select Date" : "Step 2 of 3: Select Duration"}
                   </span>
                   <Info size={13} className="text-[var(--booking-text-light)]" />
                 </div>
@@ -99,11 +198,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
               >
                 {/* MONTH SWITCHER */}
                 <div className="flex items-center justify-between mb-4">
-                  <button className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
+                  <button onClick={handlePrevMonth} className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
                     <ChevronLeft size={18} />
                   </button>
-                  <h3 className="text-[15px] font-bold text-[var(--booking-text-dark)]">July 2026</h3>
-                  <button className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
+                  <h3 className="text-[15px] font-bold text-[var(--booking-text-dark)]">
+                    {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                  </h3>
+                  <button onClick={handleNextMonth} className="text-[var(--booking-text-light)] hover:text-[var(--booking-text-muted)]">
                     <ChevronRight size={18} />
                   </button>
                 </div>
@@ -119,26 +220,36 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
                 {/* DAYS GRID */}
                 <div className="grid grid-cols-7 gap-y-2 gap-x-1 sm:gap-x-2 text-center place-items-center">
-                  {days.map((day, i) => {
-                    if (day.type === "empty" || !day.date) {
-                      return <div key={`empty-${i}`} className="w-8 h-8" />;
-                    }
-
-                    let styles = "bg-[var(--booking-green-bg)] text-[var(--booking-green-text)] hover:bg-[var(--booking-green-hover)]";
-                    if (day.type === "pink-solid") styles = "bg-[var(--booking-pink-solid-bg)] text-white hover:bg-[var(--booking-pink-solid-hover)]";
-                    if (day.type === "pink-light") styles = "bg-[var(--booking-pink-light-bg)] text-[var(--booking-pink-light-text)] hover:bg-[var(--booking-pink-light-hover)]";
-                    if (day.type === "purple-solid") styles = "bg-[var(--booking-purple-solid-bg)] text-white hover:bg-[var(--booking-purple-solid-hover)]";
+                  {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                    <div key={`empty-${i}`} className="w-8 h-8" />
+                  ))}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const d = i + 1;
+                    const dateObj = new Date(year, month, d);
+                    const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    const isSelected = selectedDate?.getDate() === d && selectedDate?.getMonth() === month && selectedDate?.getFullYear() === year;
+                    
+                    let styles = isPast 
+                      ? "text-gray-300 cursor-not-allowed" 
+                      : isSelected 
+                      ? "bg-[var(--booking-pink-solid-bg)] text-white shadow-md font-bold" 
+                      : "bg-[var(--booking-green-bg)] text-[var(--booking-green-text)] hover:bg-[var(--booking-green-hover)]";
 
                     return (
                       <button
-                        key={i}
-                        className={`w-[32px] h-[32px] rounded-full flex items-center justify-center text-[13px] font-semibold transition-colors ${styles}`}
+                        key={d}
+                        disabled={isPast}
+                        onClick={() => setSelectedDate(dateObj)}
+                        className={`w-[32px] h-[32px] rounded-full flex items-center justify-center text-[13px] transition-colors ${styles}`}
                       >
-                        {day.date}
+                        {d}
                       </button>
                     );
                   })}
                 </div>
+                {errorMsg && (
+                   <p className="text-red-500 text-xs mt-3 text-center">{errorMsg}</p>
+                )}
               </motion.div>
             )}
 
@@ -148,25 +259,37 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
+                className="flex flex-col gap-4"
               >
-                {/* TIME SLOTS GRID */}
-                <div className="grid grid-cols-2 gap-3 pb-2 pt-1">
-                  {timeSlots.map((slot, i) => {
-                    let styles = "bg-[var(--booking-green-bg)] text-[var(--booking-green-text)] hover:bg-[var(--booking-green-hover)]";
-                    if (slot.type === "pink-solid") styles = "bg-[var(--booking-pink-solid-bg)] text-white hover:bg-[var(--booking-pink-solid-hover)]";
-                    if (slot.type === "pink-light") styles = "bg-[var(--booking-pink-light-bg)] text-[var(--booking-pink-light-text)] hover:bg-[var(--booking-pink-light-hover)]";
-                    if (slot.type === "purple-solid") styles = "bg-[var(--booking-purple-solid-bg)] text-white hover:bg-[var(--booking-purple-solid-hover)]";
-
-                    return (
-                      <button
-                        key={i}
-                        className={`w-full py-[10px] rounded-[10px] text-[13px] font-bold transition-all shadow-sm ${styles}`}
-                      >
-                        {slot.time}
-                      </button>
-                    );
-                  })}
+                <div className="text-sm text-[var(--booking-text-dark)] font-medium text-center">
+                  Selected Date: <span className="font-bold text-[var(--booking-pink-solid-bg)]">{selectedDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</span>
                 </div>
+
+                <div className="flex flex-col gap-3 pb-2 pt-1">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-semibold text-[var(--booking-text-muted)] mb-1 uppercase tracking-wide">Start Time</label>
+                    <input 
+                      type="time" 
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="w-full py-2 px-3 rounded-lg border border-[var(--booking-border)] text-sm font-medium focus:outline-none focus:border-[var(--booking-pink-solid-bg)] transition-colors"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs font-semibold text-[var(--booking-text-muted)] mb-1 uppercase tracking-wide">End Time</label>
+                    <input 
+                      type="time" 
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="w-full py-2 px-3 rounded-lg border border-[var(--booking-border)] text-sm font-medium focus:outline-none focus:border-[var(--booking-pink-solid-bg)] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {errorMsg && (
+                  <p className="text-red-500 text-xs font-medium text-center bg-red-50 p-2 rounded-lg border border-red-100">{errorMsg}</p>
+                )}
               </motion.div>
             )}
 
@@ -180,22 +303,26 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 {/* AVATAR & NAME */}
                 <div className="mt-1 flex flex-col items-center">
                   <div className="w-[66px] h-[66px] rounded-full overflow-hidden shadow-[0px_4px_15px_rgba(0,0,0,0.06)] shrink-0 border-[3px] border-white">
-                    <Image src="/images/hero/hero.png" alt="Jasmine" width={66} height={66} className="object-cover w-full h-full" />
+                    {influencer?.image ? (
+                        <img src={influencer.image} alt={influencer.full_name} className="object-cover w-full h-full" />
+                    ) : (
+                        <div className="w-full h-full bg-gray-200"></div>
+                    )}
                   </div>
-                  <h3 className="text-[15px] font-bold mt-2 text-[var(--booking-text-dark)] leading-none">Jasmine</h3>
-                  <p className="text-[11px] text-[var(--booking-text-light)] mt-1 tracking-wide">@jasmine_official02</p>
+                  <h3 className="text-[15px] font-bold mt-2 text-[var(--booking-text-dark)] leading-none">{influencer?.full_name || "Influencer"}</h3>
+                  <p className="text-[11px] text-[var(--booking-text-light)] mt-1 tracking-wide">@{influencer?.influencer_id || "username"}</p>
                 </div>
 
                 {/* PENDING CARD */}
                 <div className="bg-[#fafafa] border border-[var(--booking-border)] rounded-[14px] p-5 mt-5 flex flex-col items-center text-center w-full shadow-sm">
                   <div className="bg-[var(--booking-pink-light-bg)] text-[var(--booking-pink-solid-hover)] px-[14px] py-[3px] rounded-full text-[10px] font-bold tracking-wide mb-3">
-                    Pending
+                    Success
                   </div>
                   <h4 className="text-[15px] font-bold text-[var(--booking-text-dark)] mb-2 tracking-tight">
-                    Your request is on its way!
+                    Your slot is created!
                   </h4>
                   <p className="text-[12px] text-[var(--booking-text-muted)] leading-[18px]">
-                    We sent your request to Jasmine and will notify you as soon as she responds. This may take a few moments.
+                    We successfully registered your slot with {influencer?.full_name || "them"}. You will be notified of any updates.
                   </p>
                 </div>
 
@@ -203,12 +330,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 <div className="flex items-center gap-3 mt-6 w-full">
                   <button
                     onClick={onClose}
-                    className="flex-1 py-[10px] rounded-[10px] bg-[var(--booking-pink-light-bg)] text-[12px] md:text-[13px] font-bold text-[var(--booking-pink-solid-bg)] transition-colors hover:opacity-80"
+                    className="flex-1 py-[10px] rounded-[10px] bg-[var(--booking-pink-solid-bg)] text-[12px] md:text-[13px] font-bold text-white transition-colors hover:bg-[var(--booking-pink-solid-hover)] shadow-sm"
                   >
-                    Cancel Request
-                  </button>
-                  <button className="flex-1 py-[10px] rounded-[10px] border border-[var(--booking-purple-solid-bg)] bg-white text-[12px] md:text-[13px] font-bold text-[var(--booking-purple-solid-bg)] transition-colors hover:bg-[#faf5ff] shadow-sm">
-                    View All Request
+                    Done
                   </button>
                 </div>
               </motion.div>
@@ -224,23 +348,24 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                   onClick={() => {
                     if (step > 1) {
                       setStep(step - 1);
+                      setErrorMsg("");
                     } else {
                       onClose();
                     }
                   }}
                   className="flex-1 py-[10px] rounded-[12px] border border-[var(--booking-btn-border)] text-[14px] font-bold text-[var(--booking-text-muted)] transition-colors hover:bg-gray-50 bg-white"
                 >
-                  Cancel
+                  {step === 1 ? "Cancel" : "Back"}
                 </button>
                 <button
-                  onClick={() => {
-                    if (step < 3) {
-                      setStep(step + 1);
-                    }
-                  }}
-                  className="flex-1 py-[10px] rounded-[12px] bg-[var(--booking-pink-solid-bg)] text-[14px] font-bold text-white transition-colors hover:bg-[var(--booking-pink-solid-hover)] shadow-[0px_4px_10px_rgba(236,72,153,0.2)]"
+                  onClick={handleNextStep}
+                  disabled={loading}
+                  className="flex-1 py-[10px] rounded-[12px] bg-[var(--booking-pink-solid-bg)] text-[14px] font-bold text-white transition-colors hover:bg-[var(--booking-pink-solid-hover)] shadow-[0px_4px_10px_rgba(236,72,153,0.2)] disabled:opacity-70 flex items-center justify-center gap-2"
                 >
-                  Next
+                  {loading ? (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : null}
+                  {step === 2 ? "Book Slot" : "Next"}
                 </button>
               </div>
             </>
